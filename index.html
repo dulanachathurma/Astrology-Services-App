@@ -748,9 +748,9 @@
             color: #ffd700;
         }
         
-        /* Facebook Link Styles */
+        /* Facebook Link Styles - FIXED WIDTH */
         .facebook-link-container {
-            margin: 40px 0;
+            margin: 40px auto;
             padding: 25px;
             background: linear-gradient(135deg, 
                 rgba(24, 119, 242, 0.1) 0%, 
@@ -758,11 +758,15 @@
             border-radius: 25px;
             border: 2px solid rgba(24, 119, 242, 0.2);
             backdrop-filter: blur(10px);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
         }
         
         .facebook-link {
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 15px;
             padding: 18px 35px;
             background: linear-gradient(135deg, #1877F2 0%, #0d5cb6 100%);
@@ -773,6 +777,8 @@
             font-weight: 600;
             transition: all 0.4s ease;
             box-shadow: 0 10px 25px rgba(24, 119, 242, 0.4);
+            width: 100%;
+            white-space: nowrap;
         }
         
         .facebook-link:active {
@@ -1164,47 +1170,6 @@
             margin-bottom: 35px;
         }
         
-        /* Rahu Kalaya Styles */
-        .rahu-times {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 25px;
-            margin-top: 30px;
-        }
-        
-        .rahu-time-card {
-            background: linear-gradient(135deg, 
-                rgba(255, 107, 107, 0.1) 0%, 
-                rgba(238, 90, 36, 0.08) 100%);
-            padding: 30px;
-            border-radius: 25px;
-            text-align: center;
-            transition: all 0.5s ease;
-            border: 2px solid transparent;
-            backdrop-filter: blur(15px);
-        }
-        
-        .rahu-time-card:hover {
-            border-color: #ff6b6b;
-            transform: translateY(-10px) scale(1.08);
-            background: linear-gradient(135deg, 
-                rgba(255, 107, 107, 0.2) 0%, 
-                rgba(238, 90, 36, 0.15) 100%);
-            box-shadow: 0 20px 40px rgba(255, 107, 107, 0.3);
-        }
-        
-        .rahu-time-card h4 {
-            color: #ffd700;
-            margin-bottom: 20px;
-            font-size: 1.4rem;
-        }
-        
-        .rahu-time-card p {
-            font-size: 1.8rem;
-            color: #ff6b6b;
-            font-weight: 700;
-        }
-        
         /* Animation Keyframes */
         @keyframes fadeIn {
             from { 
@@ -1465,16 +1430,6 @@
                     </button>
                 </div>
                 
-                <!-- Rahu Kalaya -->
-                <div class="menu-btn" onclick="showRahuKalaya()">
-                    <div class="btn-icon rahu-icon"><i class="fas fa-hourglass-half"></i></div>
-                    <span class="btn-text">රාහු කාලය</span>
-                    <div class="btn-description">දිනපතා රාහු කාලය</div>
-                    <button class="template-btn" onclick="openRahuKalaya()">
-                        <i class="fas fa-external-link-alt"></i> දිනපතා රාහු කාලය
-                    </button>
-                </div>
-                
                 <!-- Palapala Details -->
                 <div class="menu-btn" onclick="showPalapalaTemplate()">
                     <div class="btn-icon palapala-icon"><i class="fas fa-star"></i></div>
@@ -1538,7 +1493,7 @@
                     <p><i class="fas fa-calendar-check"></i> සෑම දිනකම</p>
                 </div>
                 
-                <!-- Facebook Link Container -->
+                <!-- Facebook Link Container - FIXED WIDTH -->
                 <div class="facebook-link-container">
                     <a href="https://www.facebook.com/profile.php?id=61584368804841" 
                        target="_blank" 
@@ -1923,9 +1878,9 @@
             resetAutoSlide();
         }
         
-        // Start Auto Slide
+        // Start Auto Slide - CHANGED TO 3 SECONDS
         function startAutoSlide() {
-            autoSlideInterval = setInterval(nextSlide, 30000);
+            autoSlideInterval = setInterval(nextSlide, 3000);
         }
         
         // Reset Auto Slide
@@ -1996,44 +1951,6 @@
             document.querySelectorAll('.fade-in, .slide-up').forEach(el => {
                 observer.observe(el);
             });
-        }
-        
-        // Open Rahu Kalaya External Link
-        function openRahuKalaya() {
-            window.open('https://porondam.lk/rahu-kalaya/', '_blank');
-        }
-        
-        // Show Rahu Kalaya - Updated to open external link
-        function showRahuKalaya() {
-            const modal = document.getElementById('templateModal');
-            const modalTitle = document.getElementById('modalTitle');
-            const modalContent = document.getElementById('modalContent');
-            
-            modalTitle.textContent = 'රාහු කාලය';
-            
-            modalContent.innerHTML = `
-                <div class="service-images">
-                    <img src="https://images.unsplash.com/photo-1516339901601-2e1b62dc0c45?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Rahu 1" class="service-image">
-                    <img src="https://images.unsplash.com/photo-1543722530-d2c3201371e7?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Rahu 2" class="service-image">
-                </div>
-                
-                <div class="service-description">
-                    <h4><i class="fas fa-info-circle"></i> සේවා විස්තර:</h4>
-                    <p>දිනපතා රාහු කාලය සහ ශුභ කාලය පිළිබඳ විස්තර සඳහා පහත බොත්තම ක්ලික් කරන්න.</p>
-                </div>
-                
-                <button class="template-btn" onclick="openRahuKalaya()" style="width: 100%; margin-top: 20px;">
-                    <i class="fas fa-external-link-alt"></i> දිනපතා රාහු කාලය බලන්න
-                </button>
-                
-                <div class="service-description" style="margin-top: 30px;">
-                    <h4><i class="fas fa-clock"></i> සටහන:</h4>
-                    <p>රාහු කාලය යනු අශුභ කාලයක් වන අතර මෙම කාලය තුළ නව කටයුතු ආරම්භ නොකිරීම වඩාත් යෝග්‍ය වේ.</p>
-                </div>
-            `;
-            
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
         }
         
         // Show Porondam Template
