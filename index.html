@@ -1193,6 +1193,11 @@
             }
         }
         
+        /* Performance Optimizations */
+        .will-change {
+            will-change: transform, opacity;
+        }
+        
         /* Mobile Touch Optimizations */
         @media (hover: none) and (pointer: coarse) {
             .menu-btn:hover {
@@ -1215,6 +1220,13 @@
             .facebook-link:active,
             .whatsapp-link:active {
                 transform: scale(0.95);
+            }
+            
+            /* Faster animations on mobile */
+            .menu-btn,
+            .template-btn,
+            .slider-btn {
+                transition-duration: 0.2s;
             }
         }
         
@@ -1358,6 +1370,20 @@
                 -webkit-overflow-scrolling: touch !important;
                 scroll-behavior: auto !important;
             }
+            
+            /* Remove animations for better performance */
+            .menu-btn,
+            .template-btn,
+            .slider-btn {
+                animation: none;
+            }
+        }
+        
+        /* High Performance Mobile Styles */
+        .mobile-optimized {
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            perspective: 1000;
         }
     </style>
 </head>
@@ -1524,13 +1550,16 @@
 
     <!-- JavaScript -->
     <script>
+        // Performance optimization - detect mobile
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
         // Auto Typing Animation
         document.addEventListener('DOMContentLoaded', function() {
             const title = "ශ්‍රී සෙත ජ්‍යොතිෂ සේවය";
             const typingElement = document.getElementById('typing-title');
             let index = 0;
             let isDeleting = false;
-            let typingSpeed = 100;
+            let typingSpeed = isMobile ? 80 : 100; // Faster on mobile
             
             function typeWriter() {
                 const currentText = typingElement.textContent;
@@ -1538,16 +1567,16 @@
                 if (!isDeleting && index < title.length) {
                     typingElement.textContent = title.substring(0, index + 1);
                     index++;
-                    typingSpeed = 100;
+                    typingSpeed = isMobile ? 80 : 100;
                 } else if (!isDeleting && index === title.length) {
-                    typingSpeed = 2000;
+                    typingSpeed = isMobile ? 1500 : 2000;
                     isDeleting = true;
                 } else if (isDeleting && index > 0) {
                     typingElement.textContent = title.substring(0, index - 1);
                     index--;
-                    typingSpeed = 50;
+                    typingSpeed = isMobile ? 40 : 50;
                 } else if (isDeleting && index === 0) {
-                    typingSpeed = 1000;
+                    typingSpeed = isMobile ? 800 : 1000;
                     isDeleting = false;
                 }
                 
@@ -1564,6 +1593,34 @@
             setupEventListeners();
             animateElements();
             startAutoUpdates();
+            
+            // Mobile performance optimizations
+            if (isMobile) {
+                optimizeForMobile();
+            }
+        }
+        
+        // Mobile performance optimizations
+        function optimizeForMobile() {
+            // Reduce animation durations
+            const style = document.createElement('style');
+            style.textContent = `
+                .menu-btn, .template-btn, .slider-btn {
+                    transition-duration: 0.2s !important;
+                }
+                .menu-btn:active, .template-btn:active, .slider-btn:active {
+                    transition-duration: 0.1s !important;
+                }
+                .background-image {
+                    transition: none !important;
+                }
+            `;
+            document.head.appendChild(style);
+            
+            // Use simpler animations
+            document.querySelectorAll('.menu-btn').forEach(btn => {
+                btn.classList.add('mobile-optimized');
+            });
         }
         
         // Lagna Slider Data with correct image names
@@ -1571,6 +1628,12 @@
             {
                 name: "මේෂ",
                 image: "lagna_mesha.jpg",
+                palapala: {
+                    daily: "",
+                    weekly: "",
+                    monthly: "",
+                    yearly: ""
+                },
                 getPrediction: function() {
                     const today = new Date();
                     const day = today.getDate();
@@ -1581,16 +1644,53 @@
                     ];
                     return predictions[day % predictions.length];
                 },
-                palapala: {
-                    daily: "අද ඔබේ නිර්භීත ගුණාංග පෙන්වීමට හොඳ අවස්ථාවකි.",
-                    weekly: "මෙම සතිය තුළ ව්‍යාපාරික ගිවිසුම් වලට හොඳය.",
-                    monthly: "මෙම මාසය තුළ සෞඛ්‍යමය ගැටළු සඳහා ප්‍රවේශම් වන්න.",
-                    yearly: "මෙම වසර තුළ වෘත්තීයමය අභියෝග ජය ගැනීමට හොඳ වසරකි."
+                getPalapala: function() {
+                    const today = new Date();
+                    const day = today.getDate();
+                    const month = today.getMonth();
+                    const year = today.getFullYear();
+                    
+                    // Dynamic palapala based on date
+                    const palapalaOptions = {
+                        daily: [
+                            "අද ඔබේ නිර්භීත ගුණාංග පෙන්වීමට හොඳ අවස්ථාවකි.",
+                            "අද වෘත්තීයමය ජයග්‍රහණ සඳහා හොඳ දිනයකි.",
+                            "අද පවුල් සාමජිකයින් සමඟ සම්බන්ධතා ශක්තිමත් කර ගන්න."
+                        ],
+                        weekly: [
+                            "මෙම සතිය තුළ ව්‍යාපාරික ගිවිසුම් වලට හොඳය.",
+                            "මෙම සතියේ අලුත් මිතුරන් සමඟ හමුවීම් වාසනාවන්ත වේ.",
+                            "මෙම සතියේ සෞඛ්‍ය සම්බන්ධ ගැටළු විසඳීමට හැකියාව ඇත."
+                        ],
+                        monthly: [
+                            "මෙම මාසය තුළ සෞඛ්‍යමය ගැටළු සඳහා ප්‍රවේශම් වන්න.",
+                            "මෙම මාසය තුළ මූල්‍යමය වශයෙන් පහසුවක් ඇති වේ.",
+                            "මෙම මාසය තුළ පවුලේ සාමජිකයෙකුගෙන් යෝජනාවක් ලැබිය හැක."
+                        ],
+                        yearly: [
+                            "මෙම වසර තුළ වෘත්තීයමය අභියෝග ජය ගැනීමට හොඳ වසරකි.",
+                            "මෙම වසර තුළ දිගුකාලීන සැලසුම් සකස් කිරීමට හොඳ වසරකි.",
+                            "මෙම වසර තුළ සමාජීය සම්බන්ධතා ශක්තිමත් වේ."
+                        ]
+                    };
+                    
+                    return {
+                        daily: palapalaOptions.daily[day % palapalaOptions.daily.length],
+                        weekly: palapalaOptions.weekly[Math.floor(day/7) % palapalaOptions.weekly.length],
+                        monthly: palapalaOptions.monthly[month % palapalaOptions.monthly.length],
+                        yearly: palapalaOptions.yearly[year % palapalaOptions.yearly.length]
+                    };
                 }
             },
             {
                 name: "වෘෂභ",
                 image: "lagna_vrishaba.jpg",
+                palapala: {
+                    daily: "",
+                    weekly: "",
+                    monthly: "",
+                    yearly: ""
+                },
                 getPrediction: function() {
                     const today = new Date();
                     const day = today.getDate();
@@ -1601,16 +1701,52 @@
                     ];
                     return predictions[day % predictions.length];
                 },
-                palapala: {
-                    daily: "අද ඔබේ කැපවීම වැඩි වේ. වැඩි කාලයක් සේවා කරන ස්ථානයකින් යම් විශේෂ පිළිගැනීමක් ලැබිය හැක.",
-                    weekly: "මෙම සතිය තුළ වැඩ කටයුතුවල දීර්ඝකාලීන සැලසුම් සකස් කර ගැනීම හොඳය.",
-                    monthly: "මෙම මාසය තුළ මූල්‍යමය වශයෙන් පහසුවක් ඇති වේ.",
-                    yearly: "මෙම වසර තුළ පවුලේ සාමජිකයෙකුගෙන් යෝජනාවක් ලැබිය හැක."
+                getPalapala: function() {
+                    const today = new Date();
+                    const day = today.getDate();
+                    const month = today.getMonth();
+                    const year = today.getFullYear();
+                    
+                    const palapalaOptions = {
+                        daily: [
+                            "අද ඔබේ කැපවීම වැඩි වේ. වැඩි කාලයක් සේවා කරන ස්ථානයකින් යම් විශේෂ පිළිගැනීමක් ලැබිය හැක.",
+                            "අද සෞඛ්‍ය සම්බන්ධයෙන් ප්‍රවේශම් වන්න.",
+                            "අද සමාජීය කටයුතු සඳහා හොඳ දිනයකි."
+                        ],
+                        weekly: [
+                            "මෙම සතිය තුළ වැඩ කටයුතුවල දීර්ඝකාලීන සැලසුම් සකස් කර ගැනීම හොඳය.",
+                            "මෙම සතියේ පවුලේ සාමජිකයින් සමඟ විශේෂ සම්බන්ධතාවක් ඇති වේ.",
+                            "මෙම සතියේ සමූහ ව්‍යාපෘතියක දී වැදගත් කාර්යභාරයක් ලැබිය හැක."
+                        ],
+                        monthly: [
+                            "මෙම මාසය තුළ මූල්‍යමය වශයෙන් පහසුවක් ඇති වේ.",
+                            "මෙම මාසය තුළ පවුලේ සාමජිකයෙකුගෙන් යෝජනාවක් ලැබිය හැක.",
+                            "මෙම මාසය තුළ වෘත්තීයමය ප්‍රගතියක් ඇති වේ."
+                        ],
+                        yearly: [
+                            "මෙම වසර තුළ වෘත්තීයමය ජයග්‍රහණ සඳහා හොඳ වසරකි.",
+                            "මෙම වසර තුළ පවුලේ සාමජිකයින් සමඟ සම්බන්ධතා ශක්තිමත් වේ.",
+                            "මෙම වසර තුළ මූල්‍යමය ස්ථාවරත්වයක් ඇති වේ."
+                        ]
+                    };
+                    
+                    return {
+                        daily: palapalaOptions.daily[day % palapalaOptions.daily.length],
+                        weekly: palapalaOptions.weekly[Math.floor(day/7) % palapalaOptions.weekly.length],
+                        monthly: palapalaOptions.monthly[month % palapalaOptions.monthly.length],
+                        yearly: palapalaOptions.yearly[year % palapalaOptions.yearly.length]
+                    };
                 }
             },
             {
                 name: "මිථුන",
                 image: "lagna_mithuna.jpg",
+                palapala: {
+                    daily: "",
+                    weekly: "",
+                    monthly: "",
+                    yearly: ""
+                },
                 getPrediction: function() {
                     const today = new Date();
                     const day = today.getDate();
@@ -1621,16 +1757,52 @@
                     ];
                     return predictions[day % predictions.length];
                 },
-                palapala: {
-                    daily: "අද සන්නිවේදනය වැඩි කර ගැනීම හොඳය.",
-                    weekly: "මෙම සතිය තුළ අධ්‍යාපනික වශයෙන් සුදුසුය.",
-                    monthly: "මෙම මාසය තුළ කුඩා ගමනක් වාසනාවන්ත වේ.",
-                    yearly: "මෙම වසර තුළ අලුත් තාක්ෂණයක් ඉගෙන ගැනීමට හොඳ අවස්ථාවකි."
+                getPalapala: function() {
+                    const today = new Date();
+                    const day = today.getDate();
+                    const month = today.getMonth();
+                    const year = today.getFullYear();
+                    
+                    const palapalaOptions = {
+                        daily: [
+                            "අද සන්නිවේදනය වැඩි කර ගැනීම හොඳය.",
+                            "අද අධ්‍යාපනික වශයෙන් සුදුසු දිනයකි.",
+                            "අද නව මිතුරන් ඇති වේ."
+                        ],
+                        weekly: [
+                            "මෙම සතිය තුළ අධ්‍යාපනික වශයෙන් සුදුසුය.",
+                            "මෙම සතියේ කුඩා ගමනක් වාසනාවන්ත වේ.",
+                            "මෙම සතියේ පරණ මිතුරෙකුගෙන් සම්බන්ධතාවක් ඇති විය හැක."
+                        ],
+                        monthly: [
+                            "මෙම මාසය තුළ කුඩා ගමනක් වාසනාවන්ත වේ.",
+                            "මෙම මාසය තුළ අලුත් තාක්ෂණයක් ඉගෙන ගැනීමට හොඳ අවස්ථාවකි.",
+                            "මෙම මාසය තුළ සන්නිවේදන කුසලතා වර්ධනය වේ."
+                        ],
+                        yearly: [
+                            "මෙම වසර තුළ අලුත් තාක්ෂණයක් ඉගෙන ගැනීමට හොඳ වසරකි.",
+                            "මෙම වසර තුළ අධ්‍යාපනික ජයග්‍රහණ සඳහා හොඳ වසරකි.",
+                            "මෙම වසර තුළ සමාජීය සම්බන්ධතා විශාල වශයෙන් වර්ධනය වේ."
+                        ]
+                    };
+                    
+                    return {
+                        daily: palapalaOptions.daily[day % palapalaOptions.daily.length],
+                        weekly: palapalaOptions.weekly[Math.floor(day/7) % palapalaOptions.weekly.length],
+                        monthly: palapalaOptions.monthly[month % palapalaOptions.monthly.length],
+                        yearly: palapalaOptions.yearly[year % palapalaOptions.yearly.length]
+                    };
                 }
             },
             {
                 name: "කටක",
                 image: "lagna_kataka.jpg",
+                palapala: {
+                    daily: "",
+                    weekly: "",
+                    monthly: "",
+                    yearly: ""
+                },
                 getPrediction: function() {
                     const today = new Date();
                     const day = today.getDate();
@@ -1641,16 +1813,52 @@
                     ];
                     return predictions[day % predictions.length];
                 },
-                palapala: {
-                    daily: "අද නිවසේ දී වැඩි අවධානයක් යොමු කරන්න.",
-                    weekly: "මෙම සතිය තුළ පවුලේ කටයුතු සඳහා වැඩි කාලයක් වෙන් කරන්න.",
-                    monthly: "මෙම මාසය තුළ රාත්‍රියේ පැවැත්වෙන උත්සවයක් සතුටුදායක වේ.",
-                    yearly: "මෙම වසර තුළ අධ්‍යාත්මික කටයුතු සඳහා කාලය වෙන් කරන්න."
+                getPalapala: function() {
+                    const today = new Date();
+                    const day = today.getDate();
+                    const month = today.getMonth();
+                    const year = today.getFullYear();
+                    
+                    const palapalaOptions = {
+                        daily: [
+                            "අද නිවසේ දී වැඩි අවධානයක් යොමු කරන්න.",
+                            "අද පවුලේ කටයුතු සඳහා වැඩි කාලයක් වෙන් කරන්න.",
+                            "අද අධ්‍යාත්මික කටයුතු සඳහා කාලය වෙන් කරන්න."
+                        ],
+                        weekly: [
+                            "මෙම සතිය තුළ පවුලේ කටයුතු සඳහා වැඩි කාලයක් වෙන් කරන්න.",
+                            "මෙම සතියේ රාත්‍රියේ පැවැත්වෙන උත්සවයක් සතුටුදායක වේ.",
+                            "මෙම සතියේ පරණ මිතුරෙකුගෙන් සම්බන්ධතාවක් ඇති විය හැක."
+                        ],
+                        monthly: [
+                            "මෙම මාසය තුළ රාත්‍රියේ පැවැත්වෙන උත්සවයක් සතුටුදායක වේ.",
+                            "මෙම මාසය තුළ පවුලේ සම්බන්ධතා ශක්තිමත් වේ.",
+                            "මෙම මාසය තුළ රහස්‍යතාව රැකගැනීම වැදගත් වේ."
+                        ],
+                        yearly: [
+                            "මෙම වසර තුළ අධ්‍යාත්මික කටයුතු සඳහා හොඳ වසරකි.",
+                            "මෙම වසර තුළ පවුලේ සම්බන්ධතා ශක්තිමත් වේ.",
+                            "මෙම වසර තුළ නිවාස සම්බන්ධ කටයුතු වාසනාවන්ත වේ."
+                        ]
+                    };
+                    
+                    return {
+                        daily: palapalaOptions.daily[day % palapalaOptions.daily.length],
+                        weekly: palapalaOptions.weekly[Math.floor(day/7) % palapalaOptions.weekly.length],
+                        monthly: palapalaOptions.monthly[month % palapalaOptions.monthly.length],
+                        yearly: palapalaOptions.yearly[year % palapalaOptions.yearly.length]
+                    };
                 }
             },
             {
                 name: "සිංහ",
                 image: "lagna_sinha.jpg",
+                palapala: {
+                    daily: "",
+                    weekly: "",
+                    monthly: "",
+                    yearly: ""
+                },
                 getPrediction: function() {
                     const today = new Date();
                     const day = today.getDate();
@@ -1661,16 +1869,52 @@
                     ];
                     return predictions[day % predictions.length];
                 },
-                palapala: {
-                    daily: "අද ඔබේ නායකත්ව ගුණාංග පෙන්වීමට හොඳ අවස්ථාවකි.",
-                    weekly: "මෙම සතිය තුළ වැඩි වැඩි කටයුතු භාර ගැනීමට හැකියාව ඇත.",
-                    monthly: "මෙම මාසය තුළ යම් ප්‍රසිද්ධියක් ලැබිය හැක.",
-                    yearly: "මෙම වසර තුළ ආයෝජනයක් කිරීමට හොඳ වසරකි."
+                getPalapala: function() {
+                    const today = new Date();
+                    const day = today.getDate();
+                    const month = today.getMonth();
+                    const year = today.getFullYear();
+                    
+                    const palapalaOptions = {
+                        daily: [
+                            "අද ඔබේ නායකත්ව ගුණාංග පෙන්වීමට හොඳ අවස්ථාවකි.",
+                            "අද වැඩි වැඩි කටයුතු භාර ගැනීමට හැකියාව ඇත.",
+                            "අද ආයෝජනයක් කිරීමට හොඳ දිනයකි."
+                        ],
+                        weekly: [
+                            "මෙම සතිය තුළ වැඩි වැඩි කටයුතු භාර ගැනීමට හැකියාව ඇත.",
+                            "මෙම සතියේ යම් ප්‍රසිද්ධියක් ලැබිය හැක.",
+                            "මෙම සතියේ දිගුකාලීන සැලසුම් සකස් කිරීමට හොඳය."
+                        ],
+                        monthly: [
+                            "මෙම මාසය තුළ යම් ප්‍රසිද්ධියක් ලැබිය හැක.",
+                            "මෙම මාසය තුළ වෘත්තීයමය වශයෙන් ඉහළ යාමේ අවස්ථාවකි.",
+                            "මෙම මාසය තුළ ආයෝජන කටයුතු වාසනාවන්ත වේ."
+                        ],
+                        yearly: [
+                            "මෙම වසර තුළ ආයෝජනයක් කිරීමට හොඳ වසරකි.",
+                            "මෙම වසර තුළ දිගුකාලීන සැලසුම් සකස් කිරීමට හොඳ වසරකි.",
+                            "මෙම වසර තුළ නායකත්ව පදවි සඳහා හොඳ වසරකි."
+                        ]
+                    };
+                    
+                    return {
+                        daily: palapalaOptions.daily[day % palapalaOptions.daily.length],
+                        weekly: palapalaOptions.weekly[Math.floor(day/7) % palapalaOptions.weekly.length],
+                        monthly: palapalaOptions.monthly[month % palapalaOptions.monthly.length],
+                        yearly: palapalaOptions.yearly[year % palapalaOptions.yearly.length]
+                    };
                 }
             },
             {
                 name: "කන්‍යා",
                 image: "lagna_kanya.jpg",
+                palapala: {
+                    daily: "",
+                    weekly: "",
+                    monthly: "",
+                    yearly: ""
+                },
                 getPrediction: function() {
                     const today = new Date();
                     const day = today.getDate();
@@ -1681,16 +1925,52 @@
                     ];
                     return predictions[day % predictions.length];
                 },
-                palapala: {
-                    daily: "අද සුපිරිසිඳු දිනයකි.",
-                    weekly: "මෙම සතිය තුළ වැඩ කටයුතු සංවිධානය කර ගැනීම හොඳය.",
-                    monthly: "මෙම මාසය තුළ සෞඛ්‍ය සම්බන්ධ ගැටළු විසඳීමට හැකියාව ඇත.",
-                    yearly: "මෙම වසර තුළ විද්‍යාත්මක කටයුතු සඳහා හොඳ වසරකි."
+                getPalapala: function() {
+                    const today = new Date();
+                    const day = today.getDate();
+                    const month = today.getMonth();
+                    const year = today.getFullYear();
+                    
+                    const palapalaOptions = {
+                        daily: [
+                            "අද සුපිරිසිඳු දිනයකි.",
+                            "අද වැඩ කටයුතු සංවිධානය කර ගැනීම හොඳය.",
+                            "අද විද්‍යාත්මක කටයුතු සඳහා හොඳ දිනයකි."
+                        ],
+                        weekly: [
+                            "මෙම සතිය තුළ වැඩ කටයුතු සංවිධානය කර ගැනීම හොඳය.",
+                            "මෙම සතියේ සෞඛ්‍ය සම්බන්ධ ගැටළු විසඳීමට හැකියාව ඇත.",
+                            "මෙම සතියේ පර්යේෂණ කටයුතු සඳහා හොඳය."
+                        ],
+                        monthly: [
+                            "මෙම මාසය තුළ සෞඛ්‍ය සම්බන්ධ ගැටළු විසඳීමට හැකියාව ඇත.",
+                            "මෙම මාසය තුළ විද්‍යාත්මක කටයුතු සඳහා හොඳය.",
+                            "මෙම මාසය තුළ අලුත් අත්දැකීමක් ලැබේ."
+                        ],
+                        yearly: [
+                            "මෙම වසර තුළ විද්‍යාත්මක කටයුතු සඳහා හොඳ වසරකි.",
+                            "මෙම වසර තුළ පර්යේෂණ කටයුතු සඳහා හොඳ වසරකි.",
+                            "මෙම වසර තුළ සෞඛ්‍යමය වශයෙන් ස්ථාවර වසරකි."
+                        ]
+                    };
+                    
+                    return {
+                        daily: palapalaOptions.daily[day % palapalaOptions.daily.length],
+                        weekly: palapalaOptions.weekly[Math.floor(day/7) % palapalaOptions.weekly.length],
+                        monthly: palapalaOptions.monthly[month % palapalaOptions.monthly.length],
+                        yearly: palapalaOptions.yearly[year % palapalaOptions.yearly.length]
+                    };
                 }
             },
             {
                 name: "තුලා",
                 image: "lagna_tula.jpg",
+                palapala: {
+                    daily: "",
+                    weekly: "",
+                    monthly: "",
+                    yearly: ""
+                },
                 getPrediction: function() {
                     const today = new Date();
                     const day = today.getDate();
@@ -1701,16 +1981,52 @@
                     ];
                     return predictions[day % predictions.length];
                 },
-                palapala: {
-                    daily: "අද සමබරතාවය රැක ගැනීම වැදගත්ය.",
-                    weekly: "මෙම සතිය තුළ ව්‍යාපාරික කටයුතුවල දී වගකීම් සහිතව ක්‍රියා කරන්න.",
-                    monthly: "මෙම මාසය තුළ සාධාරණ තීරණයක් ගැනීමට හැකියාව ඇත.",
-                    yearly: "මෙම වසර තුළ නීති සම්බන්ධ කටයුතු සඳහා හොඳ වසරකි."
+                getPalapala: function() {
+                    const today = new Date();
+                    const day = today.getDate();
+                    const month = today.getMonth();
+                    const year = today.getFullYear();
+                    
+                    const palapalaOptions = {
+                        daily: [
+                            "අද සමබරතාවය රැක ගැනීම වැදගත්ය.",
+                            "අද ව්‍යාපාරික කටයුතුවල දී වගකීම් සහිතව ක්‍රියා කරන්න.",
+                            "අද සාධාරණ තීරණයක් ගැනීමට හැකියාව ඇත."
+                        ],
+                        weekly: [
+                            "මෙම සතිය තුළ ව්‍යාපාරික කටයුතුවල දී වගකීම් සහිතව ක්‍රියා කරන්න.",
+                            "මෙම සතියේ නීති සම්බන්ධ කටයුතු සඳහා හොඳය.",
+                            "මෙම සතියේ සමබරතාවය රැක ගැනීම වැදගත්ය."
+                        ],
+                        monthly: [
+                            "මෙම මාසය තුළ සාධාරණ තීරණයක් ගැනීමට හැකියාව ඇත.",
+                            "මෙම මාසය තුළ නීති සම්බන්ධ කටයුතු සඳහා හොඳය.",
+                            "මෙම මාසය තුළ ව්‍යාපාරික සම්බන්ධතා ශක්තිමත් වේ."
+                        ],
+                        yearly: [
+                            "මෙම වසර තුළ නීති සම්බන්ධ කටයුතු සඳහා හොඳ වසරකි.",
+                            "මෙම වසර තුළ ව්‍යාපාරික සම්බන්ධතා ශක්තිමත් වේ.",
+                            "මෙම වසර තුළ සාධාරණතාවය පිළිබඳ තීරණ සඳහා හොඳ වසරකි."
+                        ]
+                    };
+                    
+                    return {
+                        daily: palapalaOptions.daily[day % palapalaOptions.daily.length],
+                        weekly: palapalaOptions.weekly[Math.floor(day/7) % palapalaOptions.weekly.length],
+                        monthly: palapalaOptions.monthly[month % palapalaOptions.monthly.length],
+                        yearly: palapalaOptions.yearly[year % palapalaOptions.yearly.length]
+                    };
                 }
             },
             {
                 name: "වෘශ්චික",
                 image: "lagna_vrischika.jpg",
+                palapala: {
+                    daily: "",
+                    weekly: "",
+                    monthly: "",
+                    yearly: ""
+                },
                 getPrediction: function() {
                     const today = new Date();
                     const day = today.getDate();
@@ -1721,16 +2037,52 @@
                     ];
                     return predictions[day % predictions.length];
                 },
-                palapala: {
-                    daily: "අද ගැඹුරු අදහස් සහතික කර ගැනීමට හොඳ දිනයකි.",
-                    weekly: "මෙම සතිය තුළ අධ්‍යාත්මික කටයුතු සඳහා කාලය වෙන් කරන්න.",
-                    monthly: "මෙම මාසය තුළ රහස්‍යතාව රැකගන්න.",
-                    yearly: "මෙම වසර තුළ පර්යේෂණ කටයුතු සඳහා හොඳ වසරකි."
+                getPalapala: function() {
+                    const today = new Date();
+                    const day = today.getDate();
+                    const month = today.getMonth();
+                    const year = today.getFullYear();
+                    
+                    const palapalaOptions = {
+                        daily: [
+                            "අද ගැඹුරු අදහස් සහතික කර ගැනීමට හොඳ දිනයකි.",
+                            "අද අධ්‍යාත්මික කටයුතු සඳහා කාලය වෙන් කරන්න.",
+                            "අද රහස්‍යතාව රැකගන්න."
+                        ],
+                        weekly: [
+                            "මෙම සතිය තුළ අධ්‍යාත්මික කටයුතු සඳහා කාලය වෙන් කරන්න.",
+                            "මෙම සතියේ ගැඹුරු අදහස් සහතික කර ගැනීමට හොඳය.",
+                            "මෙම සතියේ පර්යේෂණ කටයුතු සඳහා හොඳය."
+                        ],
+                        monthly: [
+                            "මෙම මාසය තුළ රහස්‍යතාව රැකගන්න.",
+                            "මෙම මාසය තුළ ගැඹුරු අදහස් සහතික කර ගැනීමට හොඳය.",
+                            "මෙම මාසය තුළ පර්යේෂණ කටයුතු සඳහා හොඳය."
+                        ],
+                        yearly: [
+                            "මෙම වසර තුළ පර්යේෂණ කටයුතු සඳහා හොඳ වසරකි.",
+                            "මෙම වසර තුළ අධ්‍යාත්මික වර්ධනය සඳහා හොඳ වසරකි.",
+                            "මෙම වසර තුළ ගැඹුරු අදහස් සහතික කර ගැනීමට හොඳ වසරකි."
+                        ]
+                    };
+                    
+                    return {
+                        daily: palapalaOptions.daily[day % palapalaOptions.daily.length],
+                        weekly: palapalaOptions.weekly[Math.floor(day/7) % palapalaOptions.weekly.length],
+                        monthly: palapalaOptions.monthly[month % palapalaOptions.monthly.length],
+                        yearly: palapalaOptions.yearly[year % palapalaOptions.yearly.length]
+                    };
                 }
             },
             {
                 name: "ධනු",
                 image: "lagna_dhanu.jpg",
+                palapala: {
+                    daily: "",
+                    weekly: "",
+                    monthly: "",
+                    yearly: ""
+                },
                 getPrediction: function() {
                     const today = new Date();
                     const day = today.getDate();
@@ -1741,16 +2093,52 @@
                     ];
                     return predictions[day % predictions.length];
                 },
-                palapala: {
-                    daily: "අද දුර දෙසට බලන විට හොඳ දිනයකි.",
-                    weekly: "මෙම සතිය තුළ ඉගෙනීමේ අවස්ථා ලැබිය හැක.",
-                    monthly: "මෙම මාසය තුළ ගමන් බැදීම ගැන සූදානම් වන්න.",
-                    yearly: "මෙම වසර තුළ උසස් අධ්‍යාපනය සඳහා හොඳ අවස්ථාවක්."
+                getPalapala: function() {
+                    const today = new Date();
+                    const day = today.getDate();
+                    const month = today.getMonth();
+                    const year = today.getFullYear();
+                    
+                    const palapalaOptions = {
+                        daily: [
+                            "අද දුර දෙසට බලන විට හොඳ දිනයකි.",
+                            "අද ඉගෙනීමේ අවස්ථා ලැබිය හැක.",
+                            "අද ගමන් බැදීම ගැන සූදානම් වන්න."
+                        ],
+                        weekly: [
+                            "මෙම සතිය තුළ ඉගෙනීමේ අවස්ථා ලැබිය හැක.",
+                            "මෙම සතියේ සංස්කෘතිමය කටයුතු සඳහා හොඳය.",
+                            "මෙම සතියේ ගමන් බැදීම වාසනාවන්ත වේ."
+                        ],
+                        monthly: [
+                            "මෙම මාසය තුළ ගමන් බැදීම ගැන සූදානම් වන්න.",
+                            "මෙම මාසය තුළ සංස්කෘතිමය කටයුතු සඳහා හොඳය.",
+                            "මෙම මාසය තුළ උසස් අධ්‍යාපනය සඳහා හොඳ අවස්ථාවක්."
+                        ],
+                        yearly: [
+                            "මෙම වසර තුළ උසස් අධ්‍යාපනය සඳහා හොඳ අවස්ථාවක්.",
+                            "මෙම වසර තුළ ගමන් බැදීම සඳහා හොඳ වසරකි.",
+                            "මෙම වසර තුළ සංස්කෘතිමය කටයුතු සඳහා හොඳ වසරකි."
+                        ]
+                    };
+                    
+                    return {
+                        daily: palapalaOptions.daily[day % palapalaOptions.daily.length],
+                        weekly: palapalaOptions.weekly[Math.floor(day/7) % palapalaOptions.weekly.length],
+                        monthly: palapalaOptions.monthly[month % palapalaOptions.monthly.length],
+                        yearly: palapalaOptions.yearly[year % palapalaOptions.yearly.length]
+                    };
                 }
             },
             {
                 name: "මකර",
                 image: "lagna_makara.jpg",
+                palapala: {
+                    daily: "",
+                    weekly: "",
+                    monthly: "",
+                    yearly: ""
+                },
                 getPrediction: function() {
                     const today = new Date();
                     const day = today.getDate();
@@ -1761,16 +2149,52 @@
                     ];
                     return predictions[day % predictions.length];
                 },
-                palapala: {
-                    daily: "අද අභියෝග ජය ගැනීමට හොඳ දිනයකි.",
-                    weekly: "මෙම සතිය තුළ ඉහළ පදවිවල සිටින අයගේ සහයෝගය ලැබිය හැක.",
-                    monthly: "මෙම මාසය තුළ වෘත්තීයමය වශයෙන් ඉහළ යාමේ අවස්ථාවකි.",
-                    yearly: "මෙම වසර තුළ දිගුකාලීන සැලසුම් සකස් කිරීමට හොඳ වසරකි."
+                getPalapala: function() {
+                    const today = new Date();
+                    const day = today.getDate();
+                    const month = today.getMonth();
+                    const year = today.getFullYear();
+                    
+                    const palapalaOptions = {
+                        daily: [
+                            "අද අභියෝග ජය ගැනීමට හොඳ දිනයකි.",
+                            "අද ඉහළ පදවිවල සිටින අයගේ සහයෝගය ලැබිය හැක.",
+                            "අද වෘත්තීයමය වශයෙන් ඉහළ යාමේ අවස්ථාවකි."
+                        ],
+                        weekly: [
+                            "මෙම සතිය තුළ ඉහළ පදවිවල සිටින අයගේ සහයෝගය ලැබිය හැක.",
+                            "මෙම සතියේ වෘත්තීයමය වශයෙන් ඉහළ යාමේ අවස්ථාවකි.",
+                            "මෙම සතියේ දිගුකාලීන සැලසුම් සකස් කිරීමට හොඳය."
+                        ],
+                        monthly: [
+                            "මෙම මාසය තුළ වෘත්තීයමය වශයෙන් ඉහළ යාමේ අවස්ථාවකි.",
+                            "මෙම මාසය තුළ අභියෝග ජය ගැනීමට හොඳය.",
+                            "මෙම මාසය තුළ ඉහළ පදවිවල සිටින අයගේ සහයෝගය ලැබිය හැක."
+                        ],
+                        yearly: [
+                            "මෙම වසර තුළ දිගුකාලීන සැලසුම් සකස් කිරීමට හොඳ වසරකි.",
+                            "මෙම වසර තුළ වෘත්තීයමය වශයෙන් ඉහළ යාමේ වසරකි.",
+                            "මෙම වසර තුළ අභියෝග ජය ගැනීමට හොඳ වසරකි."
+                        ]
+                    };
+                    
+                    return {
+                        daily: palapalaOptions.daily[day % palapalaOptions.daily.length],
+                        weekly: palapalaOptions.weekly[Math.floor(day/7) % palapalaOptions.weekly.length],
+                        monthly: palapalaOptions.monthly[month % palapalaOptions.monthly.length],
+                        yearly: palapalaOptions.yearly[year % palapalaOptions.yearly.length]
+                    };
                 }
             },
             {
                 name: "කුම්භ",
                 image: "lagna_kumbha.jpg",
+                palapala: {
+                    daily: "",
+                    weekly: "",
+                    monthly: "",
+                    yearly: ""
+                },
                 getPrediction: function() {
                     const today = new Date();
                     const day = today.getDate();
@@ -1781,16 +2205,52 @@
                     ];
                     return predictions[day % predictions.length];
                 },
-                palapala: {
-                    daily: "අද සමාජීය කටයුතු සඳහා හොඳ දිනයකි.",
-                    weekly: "මෙම සතිය තුළ සමූහ ව්‍යාපෘතියක දී වැදගත් කාර්යභාරයක් ලැබිය හැක.",
-                    monthly: "මෙම මාසය තුළ අලුත් මිතුරන් සමඟ හමුවීම් වාසනාවන්ත වේ.",
-                    yearly: "මෙම වසර තුළ සමාජ සේවා කටයුතු සඳහා හොඳ වසරකි."
+                getPalapala: function() {
+                    const today = new Date();
+                    const day = today.getDate();
+                    const month = today.getMonth();
+                    const year = today.getFullYear();
+                    
+                    const palapalaOptions = {
+                        daily: [
+                            "අද සමාජීය කටයුතු සඳහා හොඳ දිනයකි.",
+                            "අද සමූහ ව්‍යාපෘතියක දී වැදගත් කාර්යභාරයක් ලැබිය හැක.",
+                            "අද අලුත් මිතුරන් සමඟ හමුවීම් වාසනාවන්ත වේ."
+                        ],
+                        weekly: [
+                            "මෙම සතිය තුළ සමූහ ව්‍යාපෘතියක දී වැදගත් කාර්යභාරයක් ලැබිය හැක.",
+                            "මෙම සතියේ අලුත් මිතුරන් සමඟ හමුවීම් වාසනාවන්ත වේ.",
+                            "මෙම සතියේ සමාජ සේවා කටයුතු සඳහා හොඳය."
+                        ],
+                        monthly: [
+                            "මෙම මාසය තුළ අලුත් මිතුරන් සමඟ හමුවීම් වාසනාවන්ත වේ.",
+                            "මෙම මාසය තුළ සමාජ සේවා කටයුතු සඳහා හොඳය.",
+                            "මෙම මාසය තුළ සමූහ ව්‍යාපෘති සඳහා හොඳය."
+                        ],
+                        yearly: [
+                            "මෙම වසර තුළ සමාජ සේවා කටයුතු සඳහා හොඳ වසරකි.",
+                            "මෙම වසර තුළ සමාජීය සම්බන්ධතා වර්ධනය සඳහා හොඳ වසරකි.",
+                            "මෙම වසර තුළ සමූහ ව්‍යාපෘති සඳහා හොඳ වසරකි."
+                        ]
+                    };
+                    
+                    return {
+                        daily: palapalaOptions.daily[day % palapalaOptions.daily.length],
+                        weekly: palapalaOptions.weekly[Math.floor(day/7) % palapalaOptions.weekly.length],
+                        monthly: palapalaOptions.monthly[month % palapalaOptions.monthly.length],
+                        yearly: palapalaOptions.yearly[year % palapalaOptions.yearly.length]
+                    };
                 }
             },
             {
                 name: "මීන",
                 image: "lagna_meena.jpg",
+                palapala: {
+                    daily: "",
+                    weekly: "",
+                    monthly: "",
+                    yearly: ""
+                },
                 getPrediction: function() {
                     const today = new Date();
                     const day = today.getDate();
@@ -1801,11 +2261,41 @@
                     ];
                     return predictions[day % predictions.length];
                 },
-                palapala: {
-                    daily: "අද අධ්‍යාත්මිකව සන්සුන් වන දිනයකි.",
-                    weekly: "මෙම සතිය තුළ සාමකාමී මනසක් ඇති කර ගැනීමට හොඳය.",
-                    monthly: "මෙම මාසය තුළ රහස්‍යතාව රැකගැනීම වැදගත් වේ.",
-                    yearly: "මෙම වසර තුළ අධ්‍යාත්මික ඉගෙනීම් සඳහා හොඳ වසරකි."
+                getPalapala: function() {
+                    const today = new Date();
+                    const day = today.getDate();
+                    const month = today.getMonth();
+                    const year = today.getFullYear();
+                    
+                    const palapalaOptions = {
+                        daily: [
+                            "අද අධ්‍යාත්මිකව සන්සුන් වන දිනයකි.",
+                            "අද සාමකාමී මනසක් ඇති කර ගැනීමට හොඳය.",
+                            "අද රහස්‍යතාව රැකගැනීම වැදගත් වේ."
+                        ],
+                        weekly: [
+                            "මෙම සතිය තුළ සාමකාමී මනසක් ඇති කර ගැනීමට හොඳය.",
+                            "මෙම සතියේ අධ්‍යාත්මිකව සන්සුන් වීමට හොඳය.",
+                            "මෙම සතියේ රහස්‍යතාව රැකගැනීම වැදගත් වේ."
+                        ],
+                        monthly: [
+                            "මෙම මාසය තුළ රහස්‍යතාව රැකගැනීම වැදගත් වේ.",
+                            "මෙම මාසය තුළ අධ්‍යාත්මිකව සන්සුන් වීමට හොඳය.",
+                            "මෙම මාසය තුළ අධ්‍යාත්මික ඉගෙනීම් සඳහා හොඳ අවස්ථාවක්."
+                        ],
+                        yearly: [
+                            "මෙම වසර තුළ අධ්‍යාත්මික ඉගෙනීම් සඳහා හොඳ වසරකි.",
+                            "මෙම වසර තුළ අධ්‍යාත්මික වර්ධනය සඳහා හොඳ වසරකි.",
+                            "මෙම වසර තුළ සාමකාමී ජීවිතයක් සඳහා හොඳ වසරකි."
+                        ]
+                    };
+                    
+                    return {
+                        daily: palapalaOptions.daily[day % palapalaOptions.daily.length],
+                        weekly: palapalaOptions.weekly[Math.floor(day/7) % palapalaOptions.weekly.length],
+                        monthly: palapalaOptions.monthly[month % palapalaOptions.monthly.length],
+                        yearly: palapalaOptions.yearly[year % palapalaOptions.yearly.length]
+                    };
                 }
             }
         ];
@@ -1818,6 +2308,7 @@
         function initLagnaSlider() {
             const sliderTrack = document.getElementById('slider-track');
             
+            // Update all predictions first
             updateAllPredictions();
             
             // Create slides
@@ -1846,9 +2337,39 @@
         
         // Update all predictions
         function updateAllPredictions() {
+            const today = new Date();
+            const dayKey = today.getDate() + today.getMonth() + today.getFullYear();
+            
+            // Check if we need to update (new day)
+            const lastUpdate = localStorage.getItem('lastPalapalaUpdate');
+            const needsUpdate = !lastUpdate || parseInt(lastUpdate) !== dayKey;
+            
             lagnaData.forEach(lagna => {
+                // Update daily prediction
                 lagna.prediction = lagna.getPrediction();
+                
+                // Update palapala if needed
+                if (needsUpdate) {
+                    const newPalapala = lagna.getPalapala();
+                    lagna.palapala = newPalapala;
+                    
+                    // Save to localStorage
+                    localStorage.setItem(`palapala_${lagna.name}`, JSON.stringify(newPalapala));
+                } else {
+                    // Load from localStorage
+                    const savedPalapala = localStorage.getItem(`palapala_${lagna.name}`);
+                    if (savedPalapala) {
+                        lagna.palapala = JSON.parse(savedPalapala);
+                    } else {
+                        lagna.palapala = lagna.getPalapala();
+                    }
+                }
             });
+            
+            // Update last update timestamp
+            if (needsUpdate) {
+                localStorage.setItem('lastPalapalaUpdate', dayKey.toString());
+            }
         }
         
         // Update Slider Display
@@ -1858,10 +2379,18 @@
             const slideCount = document.getElementById('slide-count');
             const progressBar = document.getElementById('progress-bar');
             
-            sliderTrack.style.transform = `translateX(-${currentSlide * 100}%)`;
-            currentLagna.textContent = lagnaData[currentSlide].name;
-            slideCount.textContent = `${currentSlide + 1}/12`;
-            progressBar.style.width = `${((currentSlide + 1) / 12) * 100}%`;
+            if (sliderTrack) {
+                sliderTrack.style.transform = `translateX(-${currentSlide * 100}%)`;
+            }
+            if (currentLagna) {
+                currentLagna.textContent = lagnaData[currentSlide].name;
+            }
+            if (slideCount) {
+                slideCount.textContent = `${currentSlide + 1}/12`;
+            }
+            if (progressBar) {
+                progressBar.style.width = `${((currentSlide + 1) / 12) * 100}%`;
+            }
         }
         
         // Next Slide
@@ -1878,9 +2407,10 @@
             resetAutoSlide();
         }
         
-        // Start Auto Slide - CHANGED TO 3 SECONDS
+        // Start Auto Slide - FASTER ON MOBILE
         function startAutoSlide() {
-            autoSlideInterval = setInterval(nextSlide, 3000);
+            const slideSpeed = isMobile ? 2500 : 3000;
+            autoSlideInterval = setInterval(nextSlide, slideSpeed);
         }
         
         // Reset Auto Slide
@@ -1891,11 +2421,13 @@
         
         // Start Auto Updates
         function startAutoUpdates() {
+            // Check for updates every hour
             setInterval(() => {
                 updateAllPredictions();
                 updateSliderDisplay();
             }, 60 * 60 * 1000);
             
+            // Check for daily updates every minute
             setInterval(() => {
                 const now = new Date();
                 if (now.getHours() === 0 && now.getMinutes() === 0) {
@@ -1911,7 +2443,7 @@
             slides.forEach((slide, index) => {
                 const textElement = slide.querySelector('.slide-text');
                 
-                if (textElement) {
+                if (textElement && lagnaData[index]) {
                     textElement.textContent = lagnaData[index].prediction;
                 }
             });
@@ -2029,20 +2561,39 @@
                          onerror="this.src='https://via.placeholder.com/300x200/4a6fa5/ffffff?text=Vrishaba'">
                 </div>
                 
-                <div class="palapala-info">
+                <div class="service-description">
                     <h4><i class="fas fa-info-circle"></i> සේවා විස්තර:</h4>
                     <p>ලග්නය අනුව වාර්ෂික, මාසික, සතිමය, දෛනික පලාපල විස්තර.</p>
                     <p><i class="fas fa-sync-alt"></i> <strong>ස්වයංක්‍රීය යාවත්කාලීනය:</strong> පලාපල දිනපතා ස්වයංක්‍රීයව යාවත්කාලීන වේ.</p>
+                    <p><i class="fas fa-clock"></i> <strong>අවසාන යාවත්කාලීනය:</strong> <span id="lastUpdateTime"></span></p>
                 </div>
                 
                 <div class="palapala-grid" id="palapalaDetails">
                     <!-- Palapala details will be loaded here -->
                 </div>
                 
+                <div class="service-description" style="margin-top: 30px;">
+                    <h4><i class="fas fa-info-circle"></i> පලාපල යාවත්කාලීන කිරීම:</h4>
+                    <p>පලාපල විස්තර ස්වයංක්‍රීයව දිනපතා යාවත්කාලීන වේ. ඔබට මෙම පිටුව නැවත පුරෝගමනය කිරීමෙන් නවතම පලාපල ලබා ගත හැකිය.</p>
+                </div>
+                
                 <button class="template-btn" onclick="showLoginForm()" style="width: 100%; margin-top: 20px;">
                     <i class="fas fa-sign-in-alt"></i> සේවා අයදීම
                 </button>
             `;
+            
+            // Update last update time
+            const lastUpdate = localStorage.getItem('lastPalapalaUpdate');
+            const lastUpdateTime = document.getElementById('lastUpdateTime');
+            if (lastUpdateTime && lastUpdate) {
+                const today = new Date();
+                const dayKey = today.getDate() + today.getMonth() + today.getFullYear();
+                if (parseInt(lastUpdate) === dayKey) {
+                    lastUpdateTime.textContent = "අද (" + today.toLocaleDateString('si-LK') + ")";
+                } else {
+                    lastUpdateTime.textContent = "පසුගිය දිනක";
+                }
+            }
             
             // Load palapala details
             setTimeout(() => {
@@ -2058,15 +2609,18 @@
             const palapalaContainer = document.getElementById('palapalaDetails');
             if (!palapalaContainer) return;
             
+            // Update predictions first
+            updateAllPredictions();
+            
             let html = '';
             lagnaData.forEach(lagna => {
                 html += `
                     <div class="palapala-card">
                         <h4><i class="fas fa-star"></i> ${lagna.name} ලග්නය</h4>
-                        <p><strong>දෛනික:</strong> ${lagna.palapala.daily}</p>
-                        <p><strong>සතිමය:</strong> ${lagna.palapala.weekly}</p>
-                        <p><strong>මාසික:</strong> ${lagna.palapala.monthly}</p>
-                        <p><strong>වාර්ෂික:</strong> ${lagna.palapala.yearly}</p>
+                        <p><strong><i class="fas fa-sun"></i> දෛනික:</strong> ${lagna.palapala.daily}</p>
+                        <p><strong><i class="fas fa-calendar-week"></i> සතිමය:</strong> ${lagna.palapala.weekly}</p>
+                        <p><strong><i class="fas fa-calendar-alt"></i> මාසික:</strong> ${lagna.palapala.monthly}</p>
+                        <p><strong><i class="fas fa-calendar"></i> වාර්ෂික:</strong> ${lagna.palapala.yearly}</p>
                     </div>
                 `;
             });
@@ -2127,7 +2681,9 @@
                 
                 <div class="service-description" style="margin-top: 30px;">
                     <h4><i class="fab fa-whatsapp"></i> WhatsApp පණිවිඩය:</h4>
-                    <p>ඔබගේ තොරතුරු යොමු කිරීමෙන් පසු WhatsApp පණිවිඩයක් ස්වයංක්‍රීයව යවනු ලැබේ. පණිවිඩයේ ඔබගේ සියලු තොරතුරු ඇතුළත් වනු ඇත.</p><p> සැලකිය යුතුයි :</p><p> ජන්ම පත්‍ර පරීක්ෂාව ,පොරොන්දම් පරීක්ෂාව ,විවාහ මංගල නැකැත්  ඇතුලු සියලුම සුබ නැකැත් සෑදීම සදහා ඔබගේ ජන්ම පත්‍ර Whats App  හරහා යොමු කළ යුතුය.</p>
+                    <p>ඔබගේ තොරතුරු යොමු කිරීමෙන් පසු WhatsApp පණිවිඩයක් ස්වයංක්‍රීයව යවනු ලැබේ. පණිවිඩයේ ඔබගේ සියලු තොරතුරු ඇතුළත් වනු ඇත.</p>
+                    <p> සැලකිය යුතුයි :</p>
+                    <p> ජන්ම පත්‍ර පරීක්ෂාව ,පොරොන්දම් පරීක්ෂාව ,විවාහ මංගල නැකැත්  ඇතුලු සියලුම සුබ නැකැත් සෑදීම සදහා ඔබගේ ජන්ම පත්‍ර Whats App  හරහා යොමු කළ යුතුය.</p>
                 </div>
             `;
             
@@ -2309,11 +2865,11 @@
                 }
             }
             
-            // Apply momentum scrolling
+            // Apply momentum scrolling for faster scrolling
             if (Math.abs(velocity) > 0.5) {
                 const container = document.querySelector('.container');
                 if (container) {
-                    const scrollAmount = velocity * 1000;
+                    const scrollAmount = velocity * 1500; // Increased multiplier for faster scrolling
                     container.scrollBy({
                         top: scrollAmount,
                         behavior: 'smooth'
@@ -2325,12 +2881,12 @@
         // Fast scrolling optimization
         document.addEventListener('wheel', function(e) {
             // Increase scroll speed on mobile
-            if (window.innerWidth <= 768) {
+            if (isMobile) {
                 const delta = e.deltaY;
                 const container = document.querySelector('.container');
                 if (container) {
                     container.scrollBy({
-                        top: delta * 2,
+                        top: delta * 3, // Increased multiplier for faster scrolling
                         behavior: 'smooth'
                     });
                 }
@@ -2338,9 +2894,19 @@
         }, { passive: true });
         
         // Disable smooth scroll on mobile for better performance
-        if ('ontouchstart' in window || navigator.maxTouchPoints) {
+        if (isMobile) {
             document.documentElement.style.scrollBehavior = 'auto';
+            
+            // Add touch action for better scrolling
+            document.querySelectorAll('.menu-btn, .template-btn').forEach(el => {
+                el.style.touchAction = 'manipulation';
+            });
         }
+        
+        // Force update palapala on page load
+        window.addEventListener('load', function() {
+            updateAllPredictions();
+        });
     </script>
 </body>
 </html>
