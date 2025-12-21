@@ -1802,6 +1802,206 @@
         // Performance optimization - detect mobile
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         
+        <!-- FIX START: 1. MODAL BACK BUTTON FIX -->
+        // Track modal state to prevent browser back button issues
+        let isModalOpen = false;
+        
+        // Open modal with URL state management
+        function openModal(modalTitle, modalContentHtml, modalType) {
+            const modal = document.getElementById('templateModal');
+            const modalTitleEl = document.getElementById('modalTitle');
+            const modalContent = document.getElementById('modalContent');
+            
+            modalTitleEl.textContent = modalTitle;
+            modalContent.innerHTML = modalContentHtml;
+            
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            isModalOpen = true;
+            
+            // Add history state to allow proper back navigation
+            const stateObj = { modal: modalType, time: Date.now() };
+            history.pushState(stateObj, modalTitle, `#${modalType}`);
+            
+            // Load palapala details if needed
+            if (modalType === 'palapala') {
+                setTimeout(() => {
+                    loadPalapalaDetails();
+                }, 100);
+            }
+        }
+        
+        // Close modal properly
+        function closeModal() {
+            const modal = document.getElementById('templateModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+            isModalOpen = false;
+            
+            // Go back in history if we're in a modal state
+            if (window.location.hash) {
+                history.back();
+            }
+        }
+        
+        // Handle browser back button
+        window.addEventListener('popstate', function(event) {
+            const modal = document.getElementById('templateModal');
+            if (isModalOpen) {
+                modal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+                isModalOpen = false;
+            }
+        });
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('templateModal');
+            if (event.target === modal && isModalOpen) {
+                closeModal();
+            }
+        });
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && isModalOpen) {
+                closeModal();
+            }
+        });
+        
+        // Update modal functions to use new openModal function
+        function showPorondamTemplate() {
+            const modalContentHtml = `
+                <div class="service-images">
+                    <img src="service_porondam_01.jpg" alt="Porondam 1" class="service-image"
+                         onerror="this.src='https://via.placeholder.com/300x200/1e3a8a/ffd700?text=Porondam+1'">
+                    <img src="service_porondam_02.jpg" alt="Porondam 2" class="service-image"
+                         onerror="this.src='https://via.placeholder.com/300x200/1e3a8a/ffd700?text=Porondam+2'">
+                </div>
+                
+                <div class="service-description">
+                    <h4><i class="fas fa-info-circle"></i> සේවා විස්තර:</h4>
+                    <p>මනාලයා සහ මනාලියගේ ජන්ම ලග්න, රාශි, නක්ෂත්‍ර ආදිය විශ්ලේෂණය කර ගුණාත්මක බව අධ්‍යයනය කිරීම.</p>
+                </div>
+                
+                <button class="submit-btn" onclick="showLoginForm()" style="width: 100%; margin-top: 20px;">
+                    <i class="fas fa-sign-in-alt"></i> සේවා අයදීම
+                </button>
+            `;
+            openModal('පොරොන්දම් බැලීම', modalContentHtml, 'porondam');
+        }
+        
+        function showHandahanTemplate() {
+            const modalContentHtml = `
+                <div class="service-images">
+                    <img src="service_handahan_01.jpg" alt="Handahan 1" class="service-image"
+                         onerror="this.src='https://via.placeholder.com/300x200/1e3a8a/ffd700?text=Handahan+1'">
+                    <img src="service_handahan_02.jpg" alt="Handahan 2" class="service-image"
+                         onerror="this.src='https://via.placeholder.com/300x200/1e3a8a/ffd700?text=Handahan+2'">
+                </div>
+                
+                <div class="service-description">
+                    <h4><i class="fas fa-info-circle"></i> සේවා විස්තර:</h4>
+                    <p>උපන්(වේලාව, දිනය, ස්ථානය) අනුව පූර්ණ ජාතක හඳහන සකස් කිරීම.</p>
+                </div>
+                
+                <button class="submit-btn" onclick="showLoginForm()" style="width: 100%; margin-top: 20px;">
+                    <i class="fas fa-sign-in-alt"></i> සේවා අයදීම
+                </button>
+            `;
+            openModal('හඳහන් සෑදීම', modalContentHtml, 'handahan');
+        }
+        
+        function showPalapalaTemplate() {
+            const today = new Date();
+            const formattedDate = today.toLocaleDateString('si-LK');
+            
+            const modalContentHtml = `
+                <div class="service-images">
+                    <img src="පලාපල_01.jpg" alt="Palapala 1" class="service-image"
+                         onerror="this.src='https://via.placeholder.com/300x200/1e3a8a/ffd700?text=පලාපල+01'">
+                    <img src="පලාපල_02.jpg" alt="Palapala 2" class="service-image"
+                         onerror="this.src='https://via.placeholder.com/300x200/1e3a8a/ffd700?text=පලාපල+02'">
+                </div>
+                
+                <div class="service-description">
+                    <h4><i class="fas fa-info-circle"></i> සේවා විස්තර:</h4>
+                    <p>ලග්නය අනුව වාර්ෂික, මාසික, සතිමය, දෛනික පලාපල විස්තර.</p>
+                    <p><i class="fas fa-sync-alt"></i> <strong>ස්වයංක්‍රීය යාවත්කාලීනය:</strong> පලාපල දිනපතා ස්වයංක්‍රීයව යාවත්කාලීන වේ.</p>
+                    <p><i class="fas fa-clock"></i> <strong>අවසාන යාවත්කාලීනය:</strong> <span id="lastUpdateTime">${formattedDate}</span></p>
+                </div>
+                
+                <div class="palapala-grid" id="palapalaDetails">
+                    <!-- Palapala details will be loaded here -->
+                </div>
+                
+                <div class="service-description" style="margin-top: 30px;">
+                    <h4><i class="fas fa-info-circle"></i> පලාපල යාවත්කාලීන කිරීම:</h4>
+                    <p>පලාපල විස්තර ස්වයංක්‍රීයව දිනපතා යාවත්කාලීන වේ. ඔබට මෙම පිටුව නැවත පුරෝගමනය කිරීමෙන් නවතම පලාපල ලබා ගත හැකිය.</p>
+                </div>
+                
+                <button class="submit-btn" onclick="showLoginForm()" style="width: 100%; margin-top: 20px;">
+                    <i class="fas fa-sign-in-alt"></i> සේවා අයදීම
+                </button>
+            `;
+            openModal('පලාපල විස්තර', modalContentHtml, 'palapala');
+        }
+        
+        function showLoginForm() {
+            const modalContentHtml = `
+                <form class="login-form" id="serviceForm" onsubmit="submitForm(event)">
+                    <div class="form-group">
+                        <label for="serviceType"><i class="fas fa-tasks"></i> සේවා වර්ගය</label>
+                        <select class="form-select" id="serviceType" required>
+                            <option value="">තෝරන්න</option>
+                            <option value="porondam">පොරොන්දම් බැලීම</option>
+                            <option value="handahan">හඳහන් සෑදීම</option>
+                            <option value="palapala">පලාපල විස්තර</option>
+                            <option value="all">මංගල නැකැත් ඇතුළු සියලුම සුබ නැකැත් සෑදීම</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fullName"><i class="fas fa-user"></i> සම්පූර්ණ නම</label>
+                            <input type="text" class="form-input" id="fullName" placeholder="ඔබේ සම්පූර්ණ නම" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="phoneNumber"><i class="fas fa-phone"></i> දුරකථන අංකය</label>
+                            <input type="tel" class="form-input" id="phoneNumber" placeholder="07X XXX XXXX" pattern="[0-9]{10}" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="birthDetails"><i class="fas fa-calendar-alt"></i> උපන් විස්තර</label>
+                        <textarea class="form-textarea" id="birthDetails" 
+                                  placeholder="උපන් දිනය,උපන් වේලාව,උපන් ස්ථානය,ස්ත්‍රී/පුරුෂ භාවය
+උදා: 1990-05-15, 08:30 AM, කොළඹ" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="additionalInfo"><i class="fas fa-info-circle"></i> අමතර තොරතුරු</label>
+                        <textarea class="form-textarea" id="additionalInfo" 
+                                  placeholder="අවශ්‍ය අමතර තොරතුරු හෝ විශේෂ අවශ්‍යතා"></textarea>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-paper-plane"></i> Submit & WhatsApp පණිවිඩය යවන්න
+                    </button>
+                </form>
+                
+                <div class="service-description" style="margin-top: 30px;">
+                    <h4><i class="fab fa-whatsapp"></i> WhatsApp පණිවිඩය:</h4>
+                    <p>ඔබගේ තොරතුරු යොමු කිරීමෙන් පසු WhatsApp පණිවිඩයක් ස්වයංක්‍රීයව යවනු ලැබේ. පණිවිඩයේ ඔබගේ සියලු තොරතුරු ඇතුළත් වනු ඇත.</p>
+                    <p> සැලකිය යුතුයි :</p>
+                    <p> ජන්ම පත්‍ර පරීක්ෂාව ,පොරොන්දම් පරීක්ෂාව ,විවාහ මංගල නැකැත්  ඇතුලු සියලුම සුබ නැකැත් සෑදීම සදහා ඔබගේ ජන්ම පත්‍ර Whats App  හරහා යොමු කළ යුතුය.</p>
+                </div>
+            `;
+            openModal('සේවා වෙන්කරවා ගැනීම', modalContentHtml, 'login');
+        }
+        <!-- FIX END: 1. MODAL BACK BUTTON FIX -->
+        
         // Auto Typing Animation - වේගවත් කළා
         document.addEventListener('DOMContentLoaded', function() {
             const title = "ශ්‍රී සෙත ජ්‍යොතිෂ සේවය";
@@ -1849,6 +2049,7 @@
             }
         }
         
+        <!-- FIX START: 2. MOBILE PERFORMANCE OPTIMIZATIONS -->
         // Mobile performance optimizations
         function optimizeForMobile() {
             // Reduce animation durations
@@ -1866,6 +2067,16 @@
                 * {
                     scroll-behavior: auto !important;
                 }
+                /* Disable complex animations on mobile for better performance */
+                .menu-card::after {
+                    animation: none !important;
+                }
+                .snowflake-pattern {
+                    display: none !important;
+                }
+                .profile-glow {
+                    display: none !important;
+                }
             `;
             document.head.appendChild(style);
             
@@ -1873,8 +2084,35 @@
             document.querySelectorAll('.menu-card').forEach(card => {
                 card.classList.add('mobile-optimized');
             });
+            
+            // Disable hover effects on mobile
+            document.querySelectorAll('*').forEach(el => {
+                el.classList.add('mobile-touch');
+            });
         }
         
+        // Touch action optimization
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add touch-action to interactive elements
+            const touchElements = document.querySelectorAll('.template-btn, .slider-btn, .submit-btn, .facebook-link');
+            touchElements.forEach(el => {
+                el.style.touchAction = 'manipulation';
+            });
+            
+            // Prevent zoom on double tap
+            let lastTap = 0;
+            document.addEventListener('touchend', function(e) {
+                const currentTime = new Date().getTime();
+                const tapLength = currentTime - lastTap;
+                if (tapLength < 500 && tapLength > 0) {
+                    e.preventDefault();
+                }
+                lastTap = currentTime;
+            }, false);
+        });
+        <!-- FIX END: 2. MOBILE PERFORMANCE OPTIMIZATIONS -->
+        
+        <!-- FIX START: 3. PALAPALA UPDATE FIX -->
         // Lagna Slider Data with correct image names
         const lagnaData = [
             {
@@ -2586,14 +2824,15 @@
             startAutoSlide();
         }
         
-        // Update all predictions
+        // FIXED: Update all predictions with correct date comparison
         function updateAllPredictions() {
             const today = new Date();
-            const dayKey = today.getDate() + today.getMonth() + today.getFullYear();
+            // Create a unique key for today's date (YYYY-MM-DD format)
+            const dayKey = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
             
             // Check if we need to update (new day)
             const lastUpdate = localStorage.getItem('lastPalapalaUpdate');
-            const needsUpdate = !lastUpdate || parseInt(lastUpdate) !== dayKey;
+            const needsUpdate = !lastUpdate || lastUpdate !== dayKey;
             
             lagnaData.forEach(lagna => {
                 // Update daily prediction
@@ -2619,9 +2858,12 @@
             
             // Update last update timestamp
             if (needsUpdate) {
-                localStorage.setItem('lastPalapalaUpdate', dayKey.toString());
+                localStorage.setItem('lastPalapalaUpdate', dayKey);
             }
+            
+            console.log('Predictions updated for:', dayKey);
         }
+        <!-- FIX END: 3. PALAPALA UPDATE FIX -->
         
         // Update Slider Display
         function updateSlider() {
@@ -2658,9 +2900,10 @@
             resetAutoSlide();
         }
         
+        <!-- FIX START: 4. SLIDER SPEED OPTIMIZATION -->
         // Start Auto Slide - වේගවත් කළා
         function startAutoSlide() {
-            const slideSpeed = isMobile ? 2000 : 2500;
+            const slideSpeed = isMobile ? 3500 : 4500; // Slightly faster for better UX
             autoSlideInterval = setInterval(nextSlide, slideSpeed);
         }
         
@@ -2669,6 +2912,7 @@
             clearInterval(autoSlideInterval);
             startAutoSlide();
         }
+        <!-- FIX END: 4. SLIDER SPEED OPTIMIZATION -->
         
         // Start Auto Updates
         function startAutoUpdates() {
@@ -2678,14 +2922,19 @@
                 updateSliderDisplay();
             }, 60 * 60 * 1000);
             
-            // Check for daily updates every minute
-            setInterval(() => {
-                const now = new Date();
-                if (now.getHours() === 0 && now.getMinutes() === 0) {
+            // Check for daily updates at midnight
+            const now = new Date();
+            const timeUntilMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0) - now;
+            
+            setTimeout(function() {
+                updateAllPredictions();
+                updateSliderDisplay();
+                // Set to run daily at midnight
+                setInterval(() => {
                     updateAllPredictions();
                     updateSliderDisplay();
-                }
-            }, 60 * 1000);
+                }, 24 * 60 * 60 * 1000);
+            }, timeUntilMidnight);
         }
         
         // Update slider display with new predictions
@@ -2706,11 +2955,15 @@
             const menuCards = document.querySelectorAll('.menu-card');
             menuCards.forEach(card => {
                 card.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-20px) scale(1.08)';
+                    if (!isMobile) {
+                        this.style.transform = 'translateY(-20px) scale(1.08)';
+                    }
                 });
                 
                 card.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0) scale(1)';
+                    if (!isMobile) {
+                        this.style.transform = 'translateY(0) scale(1)';
+                    }
                 });
             });
         }
@@ -2736,125 +2989,6 @@
             });
         }
         
-        // Show Porondam Template
-        function showPorondamTemplate() {
-            const modal = document.getElementById('templateModal');
-            const modalTitle = document.getElementById('modalTitle');
-            const modalContent = document.getElementById('modalContent');
-            
-            modalTitle.textContent = 'පොරොන්දම් බැලීම';
-            
-            modalContent.innerHTML = `
-                <div class="service-images">
-                    <img src="service_porondam_01.jpg" alt="Porondam 1" class="service-image"
-                         onerror="this.src='https://via.placeholder.com/300x200/1e3a8a/ffd700?text=Porondam+1'">
-                    <img src="service_porondam_02.jpg" alt="Porondam 2" class="service-image"
-                         onerror="this.src='https://via.placeholder.com/300x200/1e3a8a/ffd700?text=Porondam+2'">
-                </div>
-                
-                <div class="service-description">
-                    <h4><i class="fas fa-info-circle"></i> සේවා විස්තර:</h4>
-                    <p>මනාලයා සහ මනාලියගේ ජන්ම ලග්න, රාශි, නක්ෂත්‍ර ආදිය විශ්ලේෂණය කර ගුණාත්මක බව අධ්‍යයනය කිරීම.</p>
-                </div>
-                
-                <button class="submit-btn" onclick="showLoginForm()" style="width: 100%; margin-top: 20px;">
-                    <i class="fas fa-sign-in-alt"></i> සේවා අයදීම
-                </button>
-            `;
-            
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-        
-        // Show Handahan Template
-        function showHandahanTemplate() {
-            const modal = document.getElementById('templateModal');
-            const modalTitle = document.getElementById('modalTitle');
-            const modalContent = document.getElementById('modalContent');
-            
-            modalTitle.textContent = 'හඳහන් සෑදීම';
-            
-            modalContent.innerHTML = `
-                <div class="service-images">
-                    <img src="service_handahan_01.jpg" alt="Handahan 1" class="service-image"
-                         onerror="this.src='https://via.placeholder.com/300x200/1e3a8a/ffd700?text=Handahan+1'">
-                    <img src="service_handahan_02.jpg" alt="Handahan 2" class="service-image"
-                         onerror="this.src='https://via.placeholder.com/300x200/1e3a8a/ffd700?text=Handahan+2'">
-                </div>
-                
-                <div class="service-description">
-                    <h4><i class="fas fa-info-circle"></i> සේවා විස්තර:</h4>
-                    <p>උපන්(වේලාව, දිනය, ස්ථානය) අනුව පූර්ණ ජාතක හඳහන සකස් කිරීම.</p>
-                </div>
-                
-                <button class="submit-btn" onclick="showLoginForm()" style="width: 100%; margin-top: 20px;">
-                    <i class="fas fa-sign-in-alt"></i> සේවා අයදීම
-                </button>
-            `;
-            
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-        
-        // Show Palapala Template
-        function showPalapalaTemplate() {
-            const modal = document.getElementById('templateModal');
-            const modalTitle = document.getElementById('modalTitle');
-            const modalContent = document.getElementById('modalContent');
-            
-            modalTitle.textContent = 'පලාපල විස්තර';
-            
-            modalContent.innerHTML = `
-                <div class="service-images">
-                    <img src="පලාපල_01.jpg" alt="Palapala 1" class="service-image"
-                         onerror="this.src='https://via.placeholder.com/300x200/1e3a8a/ffd700?text=පලාපල+01'">
-                    <img src="පලාපල_02.jpg" alt="Palapala 2" class="service-image"
-                         onerror="this.src='https://via.placeholder.com/300x200/1e3a8a/ffd700?text=පලාපල+02'">
-                </div>
-                
-                <div class="service-description">
-                    <h4><i class="fas fa-info-circle"></i> සේවා විස්තර:</h4>
-                    <p>ලග්නය අනුව වාර්ෂික, මාසික, සතිමය, දෛනික පලාපල විස්තර.</p>
-                    <p><i class="fas fa-sync-alt"></i> <strong>ස්වයංක්‍රීය යාවත්කාලීනය:</strong> පලාපල දිනපතා ස්වයංක්‍රීයව යාවත්කාලීන වේ.</p>
-                    <p><i class="fas fa-clock"></i> <strong>අවසාන යාවත්කාලීනය:</strong> <span id="lastUpdateTime"></span></p>
-                </div>
-                
-                <div class="palapala-grid" id="palapalaDetails">
-                    <!-- Palapala details will be loaded here -->
-                </div>
-                
-                <div class="service-description" style="margin-top: 30px;">
-                    <h4><i class="fas fa-info-circle"></i> පලාපල යාවත්කාලීන කිරීම:</h4>
-                    <p>පලාපල විස්තර ස්වයංක්‍රීයව දිනපතා යාවත්කාලීන වේ. ඔබට මෙම පිටුව නැවත පුරෝගමනය කිරීමෙන් නවතම පලාපල ලබා ගත හැකිය.</p>
-                </div>
-                
-                <button class="submit-btn" onclick="showLoginForm()" style="width: 100%; margin-top: 20px;">
-                    <i class="fas fa-sign-in-alt"></i> සේවා අයදීම
-                </button>
-            `;
-            
-            // Update last update time
-            const lastUpdate = localStorage.getItem('lastPalapalaUpdate');
-            const lastUpdateTime = document.getElementById('lastUpdateTime');
-            if (lastUpdateTime && lastUpdate) {
-                const today = new Date();
-                const dayKey = today.getDate() + today.getMonth() + today.getFullYear();
-                if (parseInt(lastUpdate) === dayKey) {
-                    lastUpdateTime.textContent = "අද (" + today.toLocaleDateString('si-LK') + ")";
-                } else {
-                    lastUpdateTime.textContent = "පසුගිය දිනක";
-                }
-            }
-            
-            // Load palapala details
-            setTimeout(() => {
-                loadPalapalaDetails();
-            }, 100);
-            
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-        
         // Load Palapala Details
         function loadPalapalaDetails() {
             const palapalaContainer = document.getElementById('palapalaDetails');
@@ -2877,69 +3011,6 @@
             });
             
             palapalaContainer.innerHTML = html;
-        }
-        
-        // Show Login Form
-        function showLoginForm() {
-            const modal = document.getElementById('templateModal');
-            const modalTitle = document.getElementById('modalTitle');
-            const modalContent = document.getElementById('modalContent');
-            
-            modalTitle.textContent = 'සේවා වෙන්කරවා ගැනීම';
-            
-            modalContent.innerHTML = `
-                <form class="login-form" id="serviceForm" onsubmit="submitForm(event)">
-                    <div class="form-group">
-                        <label for="serviceType"><i class="fas fa-tasks"></i> සේවා වර්ගය</label>
-                        <select class="form-select" id="serviceType" required>
-                            <option value="">තෝරන්න</option>
-                            <option value="porondam">පොරොන්දම් බැලීම</option>
-                            <option value="handahan">හඳහන් සෑදීම</option>
-                            <option value="palapala">පලාපල විස්තර</option>
-                            <option value="all">මංගල නැකැත් ඇතුළු සියලුම සුබ නැකැත් සෑදීම</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="fullName"><i class="fas fa-user"></i> සම්පූර්ණ නම</label>
-                            <input type="text" class="form-input" id="fullName" placeholder="ඔබේ සම්පූර්ණ නම" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="phoneNumber"><i class="fas fa-phone"></i> දුරකථන අංකය</label>
-                            <input type="tel" class="form-input" id="phoneNumber" placeholder="07X XXX XXXX" pattern="[0-9]{10}" required>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="birthDetails"><i class="fas fa-calendar-alt"></i> උපන් විස්තර</label>
-                        <textarea class="form-textarea" id="birthDetails" 
-                                  placeholder="උපන් දිනය,උපන් වේලාව,උපන් ස්ථානය,ස්ත්‍රී/පුරුෂ භාවය
-උදා: 1990-05-15, 08:30 AM, කොළඹ" required></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="additionalInfo"><i class="fas fa-info-circle"></i> අමතර තොරතුරු</label>
-                        <textarea class="form-textarea" id="additionalInfo" 
-                                  placeholder="අවශ්‍ය අමතර තොරතුරු හෝ විශේෂ අවශ්‍යතා"></textarea>
-                    </div>
-                    
-                    <button type="submit" class="submit-btn">
-                        <i class="fas fa-paper-plane"></i> Submit & WhatsApp පණිවිඩය යවන්න
-                    </button>
-                </form>
-                
-                <div class="service-description" style="margin-top: 30px;">
-                    <h4><i class="fab fa-whatsapp"></i> WhatsApp පණිවිඩය:</h4>
-                    <p>ඔබගේ තොරතුරු යොමු කිරීමෙන් පසු WhatsApp පණිවිඩයක් ස්වයංක්‍රීයව යවනු ලැබේ. පණිවිඩයේ ඔබගේ සියලු තොරතුරු ඇතුළත් වනු ඇත.</p>
-                    <p> සැලකිය යුතුයි :</p>
-                    <p> ජන්ම පත්‍ර පරීක්ෂාව ,පොරොන්දම් පරීක්ෂාව ,විවාහ මංගල නැකැත්  ඇතුලු සියලුම සුබ නැකැත් සෑදීම සදහා ඔබගේ ජන්ම පත්‍ර Whats App  හරහා යොමු කළ යුතුය.</p>
-                </div>
-            `;
-            
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
         }
         
         // Submit Form - Updated WhatsApp message
@@ -3030,42 +3101,15 @@
             localStorage.setItem('serviceRequests', JSON.stringify(savedForms));
         }
         
-        // Close Modal
-        function closeModal() {
-            const modal = document.getElementById('templateModal');
-            modal.classList.remove('active');
-            document.body.style.overflow = 'auto';
-        }
-        
-        // Close modal when clicking outside
-        window.addEventListener('click', function(event) {
-            const modal = document.getElementById('templateModal');
-            if (event.target === modal) {
-                closeModal();
-            }
-        });
-        
-        // Close modal with Escape key
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
-                closeModal();
-            }
-        });
-        
+        <!-- FIX START: 5. TOUCH EVENT OPTIMIZATIONS -->
         // Mobile touch event optimizations for faster scrolling
         let touchStartX = 0;
         let touchStartY = 0;
-        let lastTouchY = 0;
-        let velocity = 0;
-        let lastTime = 0;
         
         // Improved touch handling for fast scrolling
         document.addEventListener('touchstart', function(e) {
             touchStartX = e.touches[0].clientX;
             touchStartY = e.touches[0].clientY;
-            lastTouchY = touchStartY;
-            lastTime = Date.now();
-            velocity = 0;
             
             // Allow scrolling in text areas
             if (e.target.closest('.slide-text') || 
@@ -3076,18 +3120,6 @@
         }, { passive: true });
         
         document.addEventListener('touchmove', function(e) {
-            const touchY = e.touches[0].clientY;
-            const currentTime = Date.now();
-            const deltaTime = currentTime - lastTime;
-            const deltaY = touchY - lastTouchY;
-            
-            if (deltaTime > 0) {
-                velocity = deltaY / deltaTime;
-            }
-            
-            lastTouchY = touchY;
-            lastTime = currentTime;
-            
             // Allow scrolling in specific areas
             if (e.target.closest('.slide-text') || 
                 e.target.closest('.modal-content') ||
@@ -3115,18 +3147,6 @@
                     prevSlide();
                 }
             }
-            
-            // Apply momentum scrolling for faster scrolling
-            if (Math.abs(velocity) > 0.5) {
-                const container = document.querySelector('.container');
-                if (container) {
-                    const scrollAmount = velocity * 1800; // වේගවත් කළා
-                    container.scrollBy({
-                        top: scrollAmount,
-                        behavior: 'smooth'
-                    });
-                }
-            }
         }, { passive: true });
         
         // Fast scrolling optimization
@@ -3136,8 +3156,9 @@
                 const delta = e.deltaY;
                 const container = document.querySelector('.container');
                 if (container) {
+                    // Smooth scrolling with reduced friction
                     container.scrollBy({
-                        top: delta * 3.5, // වේගවත් කළා
+                        top: delta * 2.5,
                         behavior: 'smooth'
                     });
                 }
@@ -3153,6 +3174,7 @@
                 el.style.touchAction = 'manipulation';
             });
         }
+        <!-- FIX END: 5. TOUCH EVENT OPTIMIZATIONS -->
         
         // Force update palapala on page load
         window.addEventListener('load', function() {
