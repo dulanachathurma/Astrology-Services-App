@@ -17,11 +17,14 @@
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
             -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
         }
         
         html {
             scroll-behavior: smooth;
             overflow: auto;
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
         }
         
         body {
@@ -35,6 +38,32 @@
             -moz-osx-font-smoothing: grayscale;
             overscroll-behavior: none;
             -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
+            /* Enhanced scrolling performance */
+            overflow-y: scroll;
+            scrollbar-width: thin;
+            scrollbar-color: #1e3a8a #0a0a1a;
+        }
+        
+        /* Custom scrollbar for better UX */
+        body::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+        
+        body::-webkit-scrollbar-track {
+            background: #0a0a1a;
+            border-radius: 5px;
+        }
+        
+        body::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #1e3a8a 0%, #0f172a 100%);
+            border-radius: 5px;
+            border: 2px solid #0a0a1a;
+        }
+        
+        body::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #2d4a9e 0%, #1e293b 100%);
         }
         
         body::before {
@@ -88,6 +117,12 @@
             margin: 0 auto;
             padding: 40px 20px 20px 20px;
             -webkit-overflow-scrolling: touch;
+            /* Enhanced scrolling container */
+            overflow-y: visible;
+            scroll-behavior: smooth;
+            -webkit-scroll-behavior: smooth;
+            -moz-scroll-behavior: smooth;
+            -ms-scroll-behavior: smooth;
         }
         
         /* Header with Auto-Typing Title */
@@ -776,10 +811,13 @@
             padding-bottom: 15px;
             -webkit-overflow-scrolling: touch;
             scroll-behavior: smooth;
+            /* Enhanced scrolling for slide text */
+            scrollbar-width: thin;
+            scrollbar-color: #1e3a8a rgba(255, 255, 255, 0.08);
         }
         
         .slide-text::-webkit-scrollbar {
-            width: 10px;
+            width: 8px;
         }
         
         .slide-text::-webkit-scrollbar-track {
@@ -790,6 +828,11 @@
         .slide-text::-webkit-scrollbar-thumb {
             background: linear-gradient(#1e3a8a, #0f172a);
             border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .slide-text::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(#2d4a9e, #1e293b);
         }
         
         .slider-controls {
@@ -1032,6 +1075,23 @@
             -webkit-overflow-scrolling: touch;
             border: 3px solid rgba(255, 215, 0, 0.3);
             backdrop-filter: blur(25px);
+            /* Enhanced modal scrolling */
+            scrollbar-width: thin;
+            scrollbar-color: #1e3a8a #0f172a;
+        }
+        
+        .modal-content::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        .modal-content::-webkit-scrollbar-track {
+            background: #0f172a;
+            border-radius: 5px;
+        }
+        
+        .modal-content::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #1e3a8a 0%, #0a0a1a 100%);
+            border-radius: 5px;
         }
         
         .modal.active .modal-content {
@@ -1593,14 +1653,14 @@
         /* Fast scrolling for mobile */
         @media (hover: none) and (pointer: coarse) {
             html {
-                scroll-behavior: auto;
+                scroll-behavior: smooth;
             }
             
             .container,
             .modal-content,
             .slide-text {
                 -webkit-overflow-scrolling: touch !important;
-                scroll-behavior: auto !important;
+                scroll-behavior: smooth !important;
             }
             
             /* Remove animations for better performance */
@@ -1799,8 +1859,177 @@
 
     <!-- JavaScript -->
     <script>
-        // Performance optimization - detect mobile
+        // Performance optimization - detect mobile and device type
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        const isDesktop = !isMobile && window.innerWidth > 1024;
+        
+        <!-- ENHANCED SCROLLING START -->
+        // Enhanced scrolling setup
+        function setupEnhancedScrolling() {
+            // Set scroll behavior
+            document.documentElement.style.scrollBehavior = 'smooth';
+            
+            // Detect device for appropriate scroll speed
+            let scrollMultiplier = 1.0;
+            let inertiaMultiplier = 0.92; // Reduced inertia for faster stopping
+            
+            if (isMobile) {
+                scrollMultiplier = 1.8; // Faster scrolling on mobile
+                inertiaMultiplier = 0.85; // Less inertia for quicker stops
+            } else if (isDesktop) {
+                scrollMultiplier = 1.5; // Smooth but fast desktop scrolling
+                inertiaMultiplier = 0.88;
+            }
+            
+            // Enhanced wheel scrolling
+            let isScrolling = false;
+            let scrollVelocity = 0;
+            let lastScrollTime = Date.now();
+            
+            document.addEventListener('wheel', function(e) {
+                const delta = e.deltaY;
+                const currentTime = Date.now();
+                const timeDiff = currentTime - lastScrollTime;
+                
+                // Calculate velocity
+                if (timeDiff > 0) {
+                    scrollVelocity = (delta / timeDiff) * 16;
+                }
+                
+                // Apply enhanced scrolling
+                const scrollAmount = delta * scrollMultiplier;
+                
+                window.scrollBy({
+                    top: scrollAmount,
+                    left: 0,
+                    behavior: 'auto' // Use auto for instant response
+                });
+                
+                // Prevent default only if not in input or textarea
+                if (!e.target.closest('input') && !e.target.closest('textarea')) {
+                    e.preventDefault();
+                }
+                
+                lastScrollTime = currentTime;
+                isScrolling = true;
+                
+                // Reset scrolling flag
+                clearTimeout(window.scrollTimeout);
+                window.scrollTimeout = setTimeout(() => {
+                    isScrolling = false;
+                    scrollVelocity = 0;
+                }, 100);
+            }, { passive: false });
+            
+            // Enhanced touch scrolling for mobile
+            if (isTouchDevice) {
+                let touchStartY = 0;
+                let touchStartTime = 0;
+                let momentumY = 0;
+                
+                document.addEventListener('touchstart', function(e) {
+                    touchStartY = e.touches[0].clientY;
+                    touchStartTime = Date.now();
+                    momentumY = 0;
+                }, { passive: true });
+                
+                document.addEventListener('touchmove', function(e) {
+                    const touchY = e.touches[0].clientY;
+                    const deltaY = touchStartY - touchY;
+                    const currentTime = Date.now();
+                    const timeDiff = currentTime - touchStartTime;
+                    
+                    if (timeDiff > 0) {
+                        momentumY = deltaY / timeDiff;
+                    }
+                    
+                    // Apply touch scrolling with momentum
+                    const scrollAmount = deltaY * 2.5 * scrollMultiplier;
+                    
+                    window.scrollBy({
+                        top: scrollAmount,
+                        left: 0,
+                        behavior: 'auto'
+                    });
+                    
+                    touchStartY = touchY;
+                    touchStartTime = currentTime;
+                }, { passive: false });
+                
+                document.addEventListener('touchend', function() {
+                    // Apply momentum scrolling
+                    if (Math.abs(momentumY) > 0.5) {
+                        const momentumScroll = momentumY * 50 * scrollMultiplier;
+                        
+                        window.scrollBy({
+                            top: momentumScroll,
+                            left: 0,
+                            behavior: 'smooth'
+                        });
+                    }
+                }, { passive: true });
+            }
+            
+            // Enhanced keyboard scrolling
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                    const scrollAmount = (e.key === 'ArrowDown' ? 1 : -1) * 150 * scrollMultiplier;
+                    
+                    window.scrollBy({
+                        top: scrollAmount,
+                        left: 0,
+                        behavior: 'smooth'
+                    });
+                    
+                    e.preventDefault();
+                }
+            });
+            
+            // Smooth scroll for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    const href = this.getAttribute('href');
+                    
+                    if (href !== '#') {
+                        e.preventDefault();
+                        
+                        const targetId = href.substring(1);
+                        const targetElement = document.getElementById(targetId);
+                        
+                        if (targetElement) {
+                            const offsetTop = targetElement.offsetTop;
+                            
+                            window.scrollTo({
+                                top: offsetTop - 80,
+                                behavior: 'smooth'
+                            });
+                        }
+                    }
+                });
+            });
+            
+            // Performance optimization for scrolling
+            let ticking = false;
+            
+            window.addEventListener('scroll', function() {
+                if (!ticking) {
+                    window.requestAnimationFrame(function() {
+                        // Update any scroll-dependent animations here
+                        ticking = false;
+                    });
+                    
+                    ticking = true;
+                }
+            }, { passive: true });
+        }
+        
+        // Initialize enhanced scrolling
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEnhancedScrolling();
+            initWebsite();
+        });
+        <!-- ENHANCED SCROLLING END -->
         
         <!-- FIX START: 1. MODAL BACK BUTTON FIX -->
         // Track modal state to prevent browser back button issues
@@ -2033,7 +2262,6 @@
             }
             
             typeWriter();
-            initWebsite();
         });
         
         // Website Initialization
@@ -2064,9 +2292,6 @@
                 .background-image {
                     transition: none !important;
                 }
-                * {
-                    scroll-behavior: auto !important;
-                }
                 /* Disable complex animations on mobile for better performance */
                 .menu-card::after {
                     animation: none !important;
@@ -2076,6 +2301,11 @@
                 }
                 .profile-glow {
                     display: none !important;
+                }
+                /* Optimize scrolling containers */
+                .slide-text, .modal-content {
+                    -webkit-overflow-scrolling: touch !important;
+                    overflow-scrolling: touch !important;
                 }
             `;
             document.head.appendChild(style);
