@@ -3,53 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ශ්‍රී සෙත ජ්‍යොතිෂ සේවය</title>
+    <title>ශ්‍රී සෙත ජ්‍යොතිෂ්‍ය සේවය</title>
     
     <!-- External Libraries -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Sinhala:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
-        /* === PERFORMANCE OPTIMIZATIONS FIRST === */
+        /* === SINGLE FINGER SCROLL FIX === */
+        /* Android & iPhone සඳහා ස්ක්‍රෝල් විසඳුම */
         html, body {
-            height: auto !important;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-y;
+            overscroll-behavior: none;
+            position: relative;
+        }
+
+        body {
             overflow-y: auto !important;
-            overflow-x: hidden !important;
-            touch-action: pan-y !important;
             -webkit-overflow-scrolling: touch !important;
-            scroll-behavior: auto !important;
-            overscroll-behavior-y: contain;
+            height: 100%;
+            position: relative;
+            display: block;
         }
 
+        /* Force scrolling on all mobile devices */
         * {
-            touch-action: pan-y !important;
-            pointer-events: auto !important;
             -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            touch-action: pan-y;
         }
 
-        /* Reset and Base Styles */
+        /* Main container - ALWAYS SCROLLABLE */
+        .container {
+            position: relative;
+            min-height: 100vh;
+            height: auto;
+            overflow: visible !important;
+            display: block;
+        }
+
+        /* ALL sections must be visible for scrolling */
+        section, .header, .footer, .profile-section, .menu-section, .lagna-slider-section {
+            position: relative;
+            overflow: visible !important;
+            pointer-events: auto;
+        }
+
+        /* Prevent any element from blocking scroll */
+        div, section, article, main, header, footer {
+            max-height: none !important;
+            overflow: visible !important;
+        }
+
+        /* Fix for fixed/absolute positioned elements */
+        .background-container {
+            position: fixed !important;
+            pointer-events: none !important;
+            z-index: -1000;
+        }
+
+        .modal {
+            position: fixed !important;
+            z-index: 2000;
+        }
+
+        /* Allow text areas to scroll */
+        .slide-text, .modal-content, .form-textarea {
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+        }
+
+        /* Base Styles */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-overflow-scrolling: touch;
         }
         
         html {
             scroll-behavior: smooth;
-            overflow: auto;
         }
         
         body {
             font-family: 'Noto Sans Sinhala', sans-serif;
             background: linear-gradient(135deg, #0a0a1a 0%, #151530 100%);
             color: #e6f0ff;
-            min-height: 100vh;
-            overflow-x: hidden;
-            position: relative;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
-            overscroll-behavior: none;
+            background-attachment: fixed;
         }
         
         body::before {
@@ -102,7 +149,6 @@
             margin: 0 auto;
             padding: 40px 20px 20px 20px;
             position: relative;
-            pointer-events: auto !important;
         }
         
         /* Header with Auto-Typing Title */
@@ -231,7 +277,7 @@
             opacity: 1;
         }
         
-        /* Bio Box - Updated with new design */
+        /* Bio Box */
         .bio-box {
             background: linear-gradient(135deg, 
                 rgba(15, 23, 42, 0.98) 0%, 
@@ -412,11 +458,11 @@
             padding: 0 25px;
         }
         
-        /* Menu Cards Styling - Royal Blue + Gold with Animation */
+        /* Menu Cards Styling */
         .menu-card {
             background: linear-gradient(135deg, 
-                #0f172a 0%,        /* Very dark blue - closer to royal blue */
-                #1e293b 50%,       /* Dark royal blue */
+                #0f172a 0%, 
+                #1e293b 50%, 
                 #0f172a 100%);
             border-radius: 30px;
             padding: 40px 35px;
@@ -427,16 +473,15 @@
             box-shadow: 
                 0 20px 40px rgba(0, 0, 0, 0.4),
                 inset 0 1px 0 rgba(255, 255, 255, 0.1),
-                0 0 40px rgba(255, 215, 0, 0.3); /* Gold glow */
+                0 0 40px rgba(255, 215, 0, 0.3);
             position: relative;
             overflow: hidden;
-            border: 2px solid rgba(255, 215, 0, 0.3); /* Gold border */
+            border: 2px solid rgba(255, 215, 0, 0.3);
             backdrop-filter: blur(15px);
             min-height: 320px;
             animation: cardGlow 4s infinite alternate;
         }
 
-        /* Gold pulse animation for cards */
         @keyframes cardGlow {
             0% {
                 box-shadow: 
@@ -461,7 +506,6 @@
             }
         }
 
-        /* Royal blue shimmer effect */
         .menu-card::after {
             content: '';
             position: absolute;
@@ -489,7 +533,6 @@
             }
         }
         
-        /* Gold accents for cards */
         .menu-card::before {
             content: '';
             position: absolute;
@@ -501,7 +544,6 @@
             z-index: 1;
         }
         
-        /* Card content on top of shimmer */
         .card-content {
             flex: 1;
             display: flex;
@@ -511,7 +553,6 @@
             z-index: 1;
         }
         
-        /* Gold accents on hover */
         .menu-card:hover {
             border-color: rgba(255, 215, 0, 0.6);
             box-shadow: 
@@ -543,7 +584,7 @@
             font-size: 2rem;
             font-weight: 700;
             margin-bottom: 25px;
-            color: #ffd700; /* Changed to gold */
+            color: #ffd700;
             text-align: center;
             transition: all 0.3s ease;
             text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
@@ -562,11 +603,11 @@
             flex-grow: 1;
         }
         
-        /* View Template Button - BUTTON එක පමණක් ක්ලික් කරාම විවෘත වේ */
+        /* View Template Button */
         .template-btn {
-            background: linear-gradient(135deg, #0066ff 0%, #0044cc 100%); /* Bright blue gradient */
-            color: white; /* White text */
-            border: 2px solid rgba(255, 255, 255, 0.8); /* White border */
+            background: linear-gradient(135deg, #0066ff 0%, #0044cc 100%);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.8);
             padding: 16px 35px;
             border-radius: 25px;
             font-size: 1.2rem;
@@ -583,9 +624,6 @@
             width: 100%;
             -webkit-tap-highlight-color: transparent;
             touch-action: manipulation;
-            pointer-events: auto;
-            position: relative;
-            overflow: hidden;
         }
         
         .template-btn::before {
@@ -626,61 +664,6 @@
         
         .template-btn:active {
             transform: translateY(0);
-        }
-        
-        /* Service Specific Styling */
-        .rahu-icon {
-            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .palapala-icon {
-            background: linear-gradient(135deg, #ffd700, #ffed4e);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        /* Snowflake Pattern for Cards */
-        .snowflake-pattern {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                /* Snowflake patterns */
-                radial-gradient(circle at 10% 10%, rgba(255, 255, 255, 0.08) 2px, transparent 2px),
-                radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.08) 1px, transparent 1px),
-                radial-gradient(circle at 30% 50%, rgba(255, 255, 255, 0.08) 2px, transparent 2px),
-                radial-gradient(circle at 40% 70%, rgba(255, 255, 255, 0.08) 1px, transparent 1px),
-                radial-gradient(circle at 50% 90%, rgba(255, 255, 255, 0.08) 2px, transparent 2px),
-                radial-gradient(circle at 60% 20%, rgba(255, 255, 255, 0.08) 1px, transparent 1px),
-                radial-gradient(circle at 70% 40%, rgba(255, 255, 255, 0.08) 2px, transparent 2px),
-                radial-gradient(circle at 80% 60%, rgba(255, 255, 255, 0.08) 1px, transparent 1px),
-                radial-gradient(circle at 90% 80%, rgba(255, 255, 255, 0.08) 2px, transparent 2px),
-                
-                /* Snow lines */
-                linear-gradient(45deg, transparent 49%, rgba(255, 255, 255, 0.05) 49%, rgba(255, 255, 255, 0.05) 51%, transparent 51%),
-                linear-gradient(-45deg, transparent 49%, rgba(255, 255, 255, 0.05) 49%, rgba(255, 255, 255, 0.05) 51%, transparent 51%),
-                linear-gradient(90deg, transparent 49%, rgba(255, 255, 255, 0.05) 49%, rgba(255, 255, 255, 0.05) 51%, transparent 51%),
-                linear-gradient(0deg, transparent 49%, rgba(255, 255, 255, 0.05) 49%, rgba(255, 255, 255, 0.05) 51%, transparent 51%);
-            background-size: 50px 50px, 50px 50px, 50px 50px, 50px 50px, 50px 50px, 50px 50px, 50px 50px, 50px 50px, 50px 50px, 50px 50px, 50px 50px, 50px 50px, 50px 50px;
-            opacity: 0.2;
-            pointer-events: none;
-            z-index: 0;
-            animation: snowMove 20s linear infinite;
-        }
-        
-        @keyframes snowMove {
-            0% {
-                background-position: 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0;
-            }
-            100% {
-                background-position: 50px 50px, 50px 50px, 50px 50px, 50px 50px, 50px 50px, 50px 50px, 50px 50px, 50px 50px, 50px 50px, 50px 50px, 50px 50px, 50px 50px, 50px 50px;
-            }
         }
         
         /* Lagna Slider Section */
@@ -790,7 +773,6 @@
             overflow-y: auto;
             padding-bottom: 15px;
             -webkit-overflow-scrolling: touch;
-            scroll-behavior: smooth;
         }
         
         .slide-text::-webkit-scrollbar {
@@ -949,7 +931,7 @@
             color: #ffd700;
         }
         
-        /* Facebook Link Styles - FIXED WIDTH */
+        /* Facebook Link Styles */
         .facebook-link-container {
             margin: 40px auto;
             padding: 25px;
@@ -1094,422 +1076,7 @@
             border-bottom: 3px solid rgba(255, 215, 0, 0.4);
         }
         
-        /* Service Description Styles */
-        .service-description {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 30px;
-            border-radius: 20px;
-            margin-bottom: 30px;
-            border-left: 5px solid #1e3a8a;
-        }
-        
-        .service-description h4 {
-            color: #ffd700;
-            margin-bottom: 15px;
-            font-size: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .service-description p {
-            color: #d0e0ff;
-            line-height: 1.8;
-            font-size: 1.2rem;
-        }
-        
-        /* Service Images */
-        .service-images {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin: 30px 0;
-        }
-        
-        .service-image {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-            transition: transform 0.4s ease;
-            border: 2px solid rgba(255, 215, 0, 0.2);
-        }
-        
-        .service-image:hover {
-            transform: scale(1.05);
-            border-color: rgba(255, 215, 0, 0.4);
-        }
-        
-        /* Palapala Details Grid */
-        .palapala-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-top: 30px;
-        }
-        
-        .palapala-card {
-            background: linear-gradient(135deg, 
-                rgba(15, 23, 42, 0.95) 0%, 
-                rgba(30, 41, 59, 0.9) 100%);
-            border-radius: 20px;
-            padding: 30px;
-            transition: all 0.5s ease;
-            border: 2px solid rgba(255, 215, 0, 0.2);
-            backdrop-filter: blur(15px);
-        }
-        
-        .palapala-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-            border-color: rgba(255, 215, 0, 0.4);
-        }
-        
-        .palapala-card h4 {
-            color: #ffd700;
-            margin-bottom: 20px;
-            font-size: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .palapala-card p {
-            color: #d0e0ff;
-            line-height: 1.8;
-            font-size: 1.1rem;
-        }
-        
-        /* Login Form Styles */
-        .login-form {
-            width: 100%;
-        }
-        
-        .form-group {
-            margin-bottom: 35px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 15px;
-            color: #ffd700;
-            font-weight: 600;
-            font-size: 1.3rem;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-        }
-        
-        .form-input {
-            width: 100%;
-            padding: 20px 25px;
-            border: 3px solid rgba(255, 215, 0, 0.4);
-            border-radius: 20px;
-            font-size: 1.2rem;
-            font-family: 'Noto Sans Sinhala', sans-serif;
-            transition: all 0.5s ease;
-            background: rgba(255, 255, 255, 0.1);
-            color: #e6f0ff;
-            backdrop-filter: blur(10px);
-        }
-        
-        .form-input::placeholder {
-            color: #a0b0cc;
-        }
-        
-        .form-input:focus {
-            outline: none;
-            border-color: #1e3a8a;
-            box-shadow: 0 0 0 5px rgba(30, 58, 138, 0.4);
-            background: rgba(255, 255, 255, 0.15);
-        }
-        
-        .form-textarea {
-            width: 100%;
-            padding: 20px 25px;
-            border: 3px solid rgba(255, 215, 0, 0.4);
-            border-radius: 20px;
-            font-size: 1.2rem;
-            font-family: 'Noto Sans Sinhala', sans-serif;
-            transition: all 0.5s ease;
-            resize: vertical;
-            min-height: 140px;
-            background: rgba(255, 255, 255, 0.1);
-            color: #e6f0ff;
-            backdrop-filter: blur(10px);
-        }
-        
-        .form-textarea::placeholder {
-            color: #a0b0cc;
-        }
-        
-        .form-textarea:focus {
-            outline: none;
-            border-color: #1e3a8a;
-            box-shadow: 0 0 0 5px rgba(30, 58, 138, 0.4);
-            background: rgba(255, 255, 255, 0.15);
-        }
-        
-        .form-select {
-            width: 100%;
-            padding: 20px 25px;
-            border: 3px solid rgba(255, 215, 0, 0.4);
-            border-radius: 20px;
-            font-size: 1.2rem;
-            font-family: 'Noto Sans Sinhala', sans-serif;
-            transition: all 0.5s ease;
-            background: rgba(255, 255, 255, 0.1);
-            color: #e6f0ff;
-            backdrop-filter: blur(10px);
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='%23ffd700' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 25px center;
-            background-size: 16px;
-        }
-        
-        .form-select:focus {
-            outline: none;
-            border-color: #1e3a8a;
-            box-shadow: 0 0 0 5px rgba(30, 58, 138, 0.4);
-            background: rgba(255, 255, 255, 0.15);
-        }
-        
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-        }
-        
-        @media (max-width: 768px) {
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        /* WhatsApp Green Submit Button */
-        .submit-btn {
-            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
-            color: white;
-            border: 2px solid rgba(37, 211, 102, 0.6);
-            padding: 20px 50px;
-            border-radius: 30px;
-            font-size: 1.3rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.5s ease;
-            display: block;
-            width: 100%;
-            margin-top: 30px;
-            box-shadow: 0 15px 30px rgba(37, 211, 102, 0.6);
-            letter-spacing: 1.5px;
-            position: relative;
-            overflow: hidden;
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        .submit-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.3),
-                transparent
-            );
-            transition: left 0.8s ease;
-        }
-        
-        .submit-btn:hover::before {
-            left: 100%;
-        }
-        
-        .submit-btn:active {
-            transform: scale(0.98);
-        }
-        
-        .submit-btn:hover {
-            background: linear-gradient(135deg, #128C7E 0%, #075E54 100%);
-            border-color: rgba(37, 211, 102, 0.8);
-            transform: translateY(-8px);
-            box-shadow: 0 25px 50px rgba(37, 211, 102, 0.8);
-        }
-        
-        .whatsapp-link {
-            display: inline-block;
-            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
-            color: white;
-            text-decoration: none;
-            padding: 18px 35px;
-            border-radius: 30px;
-            font-weight: 600;
-            margin-top: 25px;
-            transition: all 0.5s ease;
-            box-shadow: 0 10px 25px rgba(37, 211, 102, 0.5);
-            text-align: center;
-            width: 100%;
-            font-size: 1.2rem;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .whatsapp-link::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.3),
-                transparent
-            );
-            transition: left 0.8s ease;
-        }
-        
-        .whatsapp-link:hover::before {
-            left: 100%;
-        }
-        
-        .whatsapp-link:active {
-            transform: scale(0.98);
-        }
-        
-        .whatsapp-link:hover {
-            background: linear-gradient(135deg, #128C7E 0%, #075E54 100%);
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(37, 211, 102, 0.7);
-        }
-        
-        .form-success {
-            text-align: center;
-            padding: 60px 40px;
-        }
-        
-        .success-icon {
-            font-size: 6rem;
-            color: #25D366;
-            margin-bottom: 30px;
-            animation: successPulse 2.5s infinite;
-        }
-        
-        @keyframes successPulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.15); }
-            100% { transform: scale(1); }
-        }
-        
-        .form-success h3 {
-            color: #ffd700;
-            margin-bottom: 25px;
-            font-size: 2.2rem;
-        }
-        
-        .form-success p {
-            color: #d0e0ff;
-            line-height: 1.9;
-            font-size: 1.2rem;
-            margin-bottom: 35px;
-        }
-        
-        /* Animation Keyframes */
-        @keyframes fadeIn {
-            from { 
-                opacity: 0; 
-                transform: translateY(50px); 
-            }
-            to { 
-                opacity: 1; 
-                transform: translateY(0); 
-            }
-        }
-        
-        @keyframes slideUp {
-            from { 
-                opacity: 0; 
-                transform: translateY(80px); 
-            }
-            to { 
-                opacity: 1; 
-                transform: translateY(0); 
-            }
-        }
-        
-        /* Performance Optimizations for Mobile */
-        @media (max-width: 768px) {
-            .menu-card, .template-btn, .slider-btn {
-                transition-duration: 0.15s !important;
-            }
-            
-            .background-image {
-                transition: none !important;
-            }
-            
-            .menu-card::after {
-                animation: none !important;
-            }
-            
-            .snowflake-pattern {
-                display: none !important;
-            }
-            
-            .profile-glow {
-                display: none !important;
-            }
-            
-            * {
-                scroll-behavior: auto !important;
-            }
-        }
-        
-        /* Mobile Touch Optimizations */
-        @media (hover: none) and (pointer: coarse) {
-            .menu-card:hover {
-                transform: none;
-            }
-            
-            .menu-card:active {
-                transform: scale(0.98);
-            }
-            
-            .template-btn:hover,
-            .slider-btn:hover,
-            .facebook-link:hover,
-            .whatsapp-link:hover {
-                transform: none;
-            }
-            
-            .template-btn:active,
-            .slider-btn:active,
-            .facebook-link:active,
-            .whatsapp-link:active {
-                transform: scale(0.95);
-            }
-            
-            /* Faster animations on mobile */
-            .menu-card,
-            .template-btn,
-            .slider-btn {
-                transition-duration: 0.2s;
-            }
-        }
-        
         /* Responsive Design */
-        @media (max-width: 1200px) {
-            .menu-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .main-title {
-                font-size: 2.4rem;
-            }
-        }
-        
         @media (max-width: 768px) {
             .container {
                 padding: 40px 15px 15px 15px;
@@ -1571,10 +1138,6 @@
             .bio-name-sub {
                 font-size: 1.6rem;
             }
-            
-            .form-row {
-                grid-template-columns: 1fr;
-            }
         }
         
         @media (max-width: 480px) {
@@ -1615,37 +1178,6 @@
                 width: 200px;
                 height: 200px;
             }
-            
-            .palapala-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        @media (max-width: 360px) {
-            .main-title {
-                font-size: 1.4rem;
-            }
-        }
-        
-        /* Fast scrolling for mobile */
-        @media (hover: none) and (pointer: coarse) {
-            html {
-                scroll-behavior: auto;
-            }
-            
-            .container,
-            .modal-content,
-            .slide-text {
-                -webkit-overflow-scrolling: touch !important;
-                scroll-behavior: auto !important;
-            }
-        }
-        
-        /* High Performance Mobile Styles */
-        .mobile-optimized {
-            transform: translateZ(0);
-            backface-visibility: hidden;
-            perspective: 1000;
         }
     </style>
 </head>
@@ -1695,18 +1227,16 @@
             </div>
         </section>
 
-        <!-- Menu Buttons Section - Royal Blue + Gold Theme -->
+        <!-- Menu Buttons Section -->
         <section class="menu-section">
             <h2 class="section-title">සේවා</h2>
             <div class="menu-grid">
                 <!-- Porondam Balima -->
                 <div class="menu-card">
-                    <div class="snowflake-pattern"></div>
                     <div class="card-content">
                         <div class="btn-icon"><i class="fas fa-handshake"></i></div>
                         <span class="btn-text">පොරොන්දම් බැලීම</span>
                         <div class="btn-description">මනාලයා සහ මනාලියගේ ගුණාත්මක බව අධ්‍යයනය</div>
-                        <!-- Button එක පමණක් ක්ලික් කරාම විවෘත වේ -->
                         <button class="template-btn" onclick="showPorondamTemplate()">
                             <i class="fas fa-eye"></i> View Template
                         </button>
@@ -1715,12 +1245,10 @@
                 
                 <!-- Handahan Sadima -->
                 <div class="menu-card">
-                    <div class="snowflake-pattern"></div>
                     <div class="card-content">
                         <div class="btn-icon"><i class="fas fa-scroll"></i></div>
                         <span class="btn-text">හඳහන් සෑදීම</span>
                         <div class="btn-description">උපන් වේලාව, දිනය, ස්ථානය අනුව හදහන් සකස් කිරීම</div>
-                        <!-- Button එක පමණක් ක්ලික් කරාම විවෘත වේ -->
                         <button class="template-btn" onclick="showHandahanTemplate()">
                             <i class="fas fa-eye"></i> View Template
                         </button>
@@ -1729,12 +1257,10 @@
                 
                 <!-- Palapala Details -->
                 <div class="menu-card">
-                    <div class="snowflake-pattern"></div>
                     <div class="card-content">
-                        <div class="btn-icon palapala-icon"><i class="fas fa-star"></i></div>
+                        <div class="btn-icon"><i class="fas fa-star"></i></div>
                         <span class="btn-text">පලාපල විස්තර</span>
                         <div class="btn-description">ලග්නය අනුව විස්තරාත්මක පුරෝකථන</div>
-                        <!-- Button එක පමණක් ක්ලික් කරාම විවෘත වේ -->
                         <button class="template-btn" onclick="showPalapalaTemplate()">
                             <i class="fas fa-eye"></i> View Template
                         </button>
@@ -1743,12 +1269,10 @@
                 
                 <!-- Contact -->
                 <div class="menu-card">
-                    <div class="snowflake-pattern"></div>
                     <div class="card-content">
                         <div class="btn-icon"><i class="fas fa-phone-alt"></i></div>
                         <span class="btn-text">සම්බන්ධ වන්න</span>
                         <div class="btn-description">සේවා වෙන්කරවා ගැනීම සඳහා</div>
-                        <!-- Button එක පමණක් ක්ලික් කරාම විවෘත වේ -->
                         <button class="template-btn" onclick="showLoginForm()">
                             <i class="fas fa-sign-in-alt"></i> සේවා අයදුම්කරු
                         </button>
@@ -1798,7 +1322,7 @@
                     <p><i class="fas fa-calendar-check"></i> සෑම දිනකම</p>
                 </div>
                 
-                <!-- Facebook Link Container - FIXED WIDTH -->
+                <!-- Facebook Link Container -->
                 <div class="facebook-link-container">
                     <a href="https://www.facebook.com/profile.php?id=61584368804841" 
                        target="_blank" 
@@ -1829,13 +1353,10 @@
 
     <!-- JavaScript -->
     <script>
-        // Performance optimization - detect mobile
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        
-        // Track modal state to prevent browser back button issues
+        // Track modal state
         let isModalOpen = false;
         
-        // Open modal with URL state management
+        // Open modal
         function openModal(modalTitle, modalContentHtml, modalType) {
             const modal = document.getElementById('templateModal');
             const modalTitleEl = document.getElementById('modalTitle');
@@ -1848,7 +1369,7 @@
             document.body.style.overflow = 'hidden';
             isModalOpen = true;
             
-            // Add history state to allow proper back navigation
+            // Add history state
             const stateObj = { modal: modalType, time: Date.now() };
             history.pushState(stateObj, modalTitle, `#${modalType}`);
             
@@ -1860,7 +1381,7 @@
             }
         }
         
-        // Close modal properly
+        // Close modal
         function closeModal() {
             const modal = document.getElementById('templateModal');
             modal.classList.remove('active');
@@ -1898,45 +1419,29 @@
             }
         });
         
-        // Update modal functions to use new openModal function
+        // Modal functions
         function showPorondamTemplate() {
             const modalContentHtml = `
-                <div class="service-images">
-                    <img src="service_porondam_01.jpg" alt="Porondam 1" class="service-image"
-                         onerror="this.src='https://via.placeholder.com/300x200/1e3a8a/ffd700?text=Porondam+1'">
-                    <img src="service_porondam_02.jpg" alt="Porondam 2" class="service-image"
-                         onerror="this.src='https://via.placeholder.com/300x200/1e3a8a/ffd700?text=Porondam+2'">
+                <div style="text-align: center; padding: 20px;">
+                    <h3 style="color: #ffd700;">පොරොන්දම් බැලීම</h3>
+                    <p style="color: #b0c4de; margin: 20px 0;">මනාලයා සහ මනාලියගේ ජන්ම ලග්න, රාශි, නක්ෂත්‍ර ආදිය විශ්ලේෂණය කර ගුණාත්මක බව අධ්‍යයනය කිරීම.</p>
+                    <button class="template-btn" onclick="showLoginForm()" style="margin-top: 20px;">
+                        <i class="fas fa-sign-in-alt"></i> සේවා අයදීම
+                    </button>
                 </div>
-                
-                <div class="service-description">
-                    <h4><i class="fas fa-info-circle"></i> සේවා විස්තර:</h4>
-                    <p>මනාලයා සහ මනාලියගේ ජන්ම ලග්න, රාශි, නක්ෂත්‍ර ආදිය විශ්ලේෂණය කර ගුණාත්මක බව අධ්‍යයනය කිරීම.</p>
-                </div>
-                
-                <button class="submit-btn" onclick="showLoginForm()" style="width: 100%; margin-top: 20px;">
-                    <i class="fas fa-sign-in-alt"></i> සේවා අයදීම
-                </button>
             `;
             openModal('පොරොන්දම් බැලීම', modalContentHtml, 'porondam');
         }
         
         function showHandahanTemplate() {
             const modalContentHtml = `
-                <div class="service-images">
-                    <img src="service_handahan_01.jpg" alt="Handahan 1" class="service-image"
-                         onerror="this.src='https://via.placeholder.com/300x200/1e3a8a/ffd700?text=Handahan+1'">
-                    <img src="service_handahan_02.jpg" alt="Handahan 2" class="service-image"
-                         onerror="this.src='https://via.placeholder.com/300x200/1e3a8a/ffd700?text=Handahan+2'">
+                <div style="text-align: center; padding: 20px;">
+                    <h3 style="color: #ffd700;">හඳහන් සෑදීම</h3>
+                    <p style="color: #b0c4de; margin: 20px 0;">උපන්(වේලාව, දිනය, ස්ථානය) අනුව පූර්ණ ජාතක හඳහන සකස් කිරීම.</p>
+                    <button class="template-btn" onclick="showLoginForm()" style="margin-top: 20px;">
+                        <i class="fas fa-sign-in-alt"></i> සේවා අයදීම
+                    </button>
                 </div>
-                
-                <div class="service-description">
-                    <h4><i class="fas fa-info-circle"></i> සේවා විස්තර:</h4>
-                    <p>උපන්(වේලාව, දිනය, ස්ථානය) අනුව පූර්ණ ජාතක හඳහන සකස් කිරීම.</p>
-                </div>
-                
-                <button class="submit-btn" onclick="showLoginForm()" style="width: 100%; margin-top: 20px;">
-                    <i class="fas fa-sign-in-alt"></i> සේවා අයදීම
-                </button>
             `;
             openModal('හඳහන් සෑදීම', modalContentHtml, 'handahan');
         }
@@ -1946,97 +1451,42 @@
             const formattedDate = today.toLocaleDateString('si-LK');
             
             const modalContentHtml = `
-                <div class="service-images">
-                    <img src="පලාපල_01.jpg" alt="Palapala 1" class="service-image"
-                         onerror="this.src='https://via.placeholder.com/300x200/1e3a8a/ffd700?text=පලාපල+01'">
-                    <img src="පලාපල_02.jpg" alt="Palapala 2" class="service-image"
-                         onerror="this.src='https://via.placeholder.com/300x200/1e3a8a/ffd700?text=පලාපල+02'">
+                <div style="text-align: center; padding: 20px;">
+                    <h3 style="color: #ffd700;">පලාපල විස්තර</h3>
+                    <p style="color: #b0c4de; margin: 20px 0;">ලග්නය අනුව වාර්ෂික, මාසික, සතිමය, දෛනික පලාපල විස්තර.</p>
+                    <p style="color: #ffd700; margin: 10px 0;"><i class="fas fa-sync-alt"></i> ස්වයංක්‍රීය යාවත්කාලීනය: දිනපතා</p>
+                    <div id="palapalaDetails" style="margin: 30px 0;"></div>
+                    <button class="template-btn" onclick="showLoginForm()" style="margin-top: 20px;">
+                        <i class="fas fa-sign-in-alt"></i> සේවා අයදීම
+                    </button>
                 </div>
-                
-                <div class="service-description">
-                    <h4><i class="fas fa-info-circle"></i> සේවා විස්තර:</h4>
-                    <p>ලග්නය අනුව වාර්ෂික, මාසික, සතිමය, දෛනික පලාපල විස්තර.</p>
-                    <p><i class="fas fa-sync-alt"></i> <strong>ස්වයංක්‍රීය යාවත්කාලීනය:</strong> පලාපල දිනපතා ස්වයංක්‍රීයව යාවත්කාලීන වේ.</p>
-                    <p><i class="fas fa-clock"></i> <strong>අවසාන යාවත්කාලීනය:</strong> <span id="lastUpdateTime">${formattedDate}</span></p>
-                </div>
-                
-                <div class="palapala-grid" id="palapalaDetails">
-                    <!-- Palapala details will be loaded here -->
-                </div>
-                
-                <div class="service-description" style="margin-top: 30px;">
-                    <h4><i class="fas fa-info-circle"></i> පලාපල යාවත්කාලීන කිරීම:</h4>
-                    <p>පලාපල විස්තර ස්වයංක්‍රීයව දිනපතා යාවත්කාලීන වේ. ඔබට මෙම පිටුව නැවත පුරෝගමනය කිරීමෙන් නවතම පලාපල ලබා ගත හැකිය.</p>
-                </div>
-                
-                <button class="submit-btn" onclick="showLoginForm()" style="width: 100%; margin-top: 20px;">
-                    <i class="fas fa-sign-in-alt"></i> සේවා අයදීම
-                </button>
             `;
             openModal('පලාපල විස්තර', modalContentHtml, 'palapala');
         }
         
         function showLoginForm() {
             const modalContentHtml = `
-                <form class="login-form" id="serviceForm" onsubmit="submitForm(event)">
-                    <div class="form-group">
-                        <label for="serviceType"><i class="fas fa-tasks"></i> සේවා වර්ගය</label>
-                        <select class="form-select" id="serviceType" required>
-                            <option value="">තෝරන්න</option>
-                            <option value="porondam">පොරොන්දම් බැලීම</option>
-                            <option value="handahan">හඳහන් සෑදීම</option>
-                            <option value="palapala">පලාපල විස්තර</option>
-                            <option value="all">මංගල නැකැත් ඇතුළු සියලුම සුබ නැකැත් සෑදීම</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="fullName"><i class="fas fa-user"></i> සම්පූර්ණ නම</label>
-                            <input type="text" class="form-input" id="fullName" placeholder="ඔබේ සම්පූර්ණ නම" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="phoneNumber"><i class="fas fa-phone"></i> දුරකථන අංකය</label>
-                            <input type="tel" class="form-input" id="phoneNumber" placeholder="07X XXX XXXX" pattern="[0-9]{10}" required>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="birthDetails"><i class="fas fa-calendar-alt"></i> උපන් විස්තර</label>
-                        <textarea class="form-textarea" id="birthDetails" 
-                                  placeholder="උපන් දිනය,උපන් වේලාව,උපන් ස්ථානය,ස්ත්‍රී/පුරුෂ භාවය
-උදා: 1990-05-15, 08:30 AM, කොළඹ" required></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="additionalInfo"><i class="fas fa-info-circle"></i> අමතර තොරතුරු</label>
-                        <textarea class="form-textarea" id="additionalInfo" 
-                                  placeholder="අවශ්‍ය අමතර තොරතුරු හෝ විශේෂ අවශ්‍යතා"></textarea>
-                    </div>
-                    
-                    <button type="submit" class="submit-btn">
-                        <i class="fas fa-paper-plane"></i> Submit & WhatsApp පණිවිඩය යවන්න
+                <div style="text-align: center; padding: 20px;">
+                    <h3 style="color: #ffd700;">සේවා වෙන්කරවා ගැනීම</h3>
+                    <p style="color: #b0c4de; margin: 20px 0;">ඔබගේ සේවා අවශ්‍යතා සඳහා පහත බොත්තම ක්ලික් කරන්න.</p>
+                    <button class="template-btn" onclick="window.open('https://wa.me/94711010484?text=නමස්තෙ%20ශ්‍රී%20සෙත%20ජ්‍යොතිෂ%20සේවයට%20සේවා%20අයදුම්%20කිරීමට%20අවශ්‍යයි', '_blank')" style="margin-top: 20px;">
+                        <i class="fab fa-whatsapp"></i> WhatsApp වෙතින් සම්බන්ධ වන්න
                     </button>
-                </form>
-                
-                <div class="service-description" style="margin-top: 30px;">
-                    <h4><i class="fab fa-whatsapp"></i> WhatsApp පණිවිඩය:</h4>
-                    <p>ඔබගේ තොරතුරු යොමු කිරීමෙන් පසු WhatsApp පණිවිඩයක් ස්වයංක්‍රීයව යවනු ලැබේ. පණිවිඩයේ ඔබගේ සියලු තොරතුරු ඇතුළත් වනු ඇත.</p>
-                    <p> සැලකිය යුතුයි :</p>
-                    <p> ජන්ම පත්‍ර පරීක්ෂාව ,පොරොන්දම් පරීක්ෂාව ,විවාහ මංගල නැකැත්  ඇතුලු සියලුම සුබ නැකැත් සෑදීම සදහා ඔබගේ ජන්ම පත්‍ර Whats App  හරහා යොමු කළ යුතුය.</p>
+                    <p style="color: #a0b0cc; margin-top: 20px; font-size: 0.9rem;">
+                        WhatsApp හරහා සම්බන්ධ වී ඔබගේ තොරතුරු යොමු කරන්න
+                    </p>
                 </div>
             `;
             openModal('සේවා වෙන්කරවා ගැනීම', modalContentHtml, 'login');
         }
         
-        // Auto Typing Animation - වේගවත් කළා
+        // Auto Typing Animation
         document.addEventListener('DOMContentLoaded', function() {
             const title = "ශ්‍රී සෙත ජ්‍යොතිෂ සේවය";
             const typingElement = document.getElementById('typing-title');
             let index = 0;
             let isDeleting = false;
-            let typingSpeed = isMobile ? 60 : 80; // වේගවත් කළා
+            let typingSpeed = 80;
             
             function typeWriter() {
                 const currentText = typingElement.textContent;
@@ -2044,16 +1494,16 @@
                 if (!isDeleting && index < title.length) {
                     typingElement.textContent = title.substring(0, index + 1);
                     index++;
-                    typingSpeed = isMobile ? 60 : 80;
+                    typingSpeed = 80;
                 } else if (!isDeleting && index === title.length) {
-                    typingSpeed = isMobile ? 1000 : 1500;
+                    typingSpeed = 1500;
                     isDeleting = true;
                 } else if (isDeleting && index > 0) {
                     typingElement.textContent = title.substring(0, index - 1);
                     index--;
-                    typingSpeed = isMobile ? 30 : 40;
+                    typingSpeed = 40;
                 } else if (isDeleting && index === 0) {
-                    typingSpeed = isMobile ? 500 : 700;
+                    typingSpeed = 700;
                     isDeleting = false;
                 }
                 
@@ -2068,45 +1518,13 @@
         function initWebsite() {
             initLagnaSlider();
             setupEventListeners();
-            animateElements();
-            startAutoUpdates();
-            
-            // Mobile performance optimizations
-            if (isMobile) {
-                optimizeForMobile();
-            }
         }
         
-        // Mobile performance optimizations
-        function optimizeForMobile() {
-            // Add touch-action for interactive elements
-            document.querySelectorAll('.template-btn, .slider-btn, .submit-btn, .facebook-link').forEach(el => {
-                el.style.touchAction = 'manipulation';
-            });
-            
-            // Prevent zoom on double tap
-            let lastTap = 0;
-            document.addEventListener('touchend', function(e) {
-                const currentTime = new Date().getTime();
-                const tapLength = currentTime - lastTap;
-                if (tapLength < 500 && tapLength > 0) {
-                    e.preventDefault();
-                }
-                lastTap = currentTime;
-            }, false);
-        }
-        
-        // Lagna Slider Data with correct image names
+        // Lagna Slider Data
         const lagnaData = [
             {
                 name: "මේෂ",
                 image: "lagna_mesha.jpg",
-                palapala: {
-                    daily: "",
-                    weekly: "",
-                    monthly: "",
-                    yearly: ""
-                },
                 getPrediction: function() {
                     const today = new Date();
                     const day = today.getDate();
@@ -2116,53 +1534,11 @@
                         "පවුලේ සාමජිකයෙකුගෙන් යෝජනාවක් ලැබිය හැක. සෞඛ්‍ය සම්බන්ධයෙන් ප්‍රවේශම් වන්න."
                     ];
                     return predictions[day % predictions.length];
-                },
-                getPalapala: function() {
-                    const today = new Date();
-                    const day = today.getDate();
-                    const month = today.getMonth();
-                    const year = today.getFullYear();
-                    
-                    const palapalaOptions = {
-                        daily: [
-                            "අද ඔබේ නිර්භීත ගුණාංග පෙන්වීමට හොඳ අවස්ථාවකි.",
-                            "අද වෘත්තීයමය ජයග්‍රහණ සඳහා හොඳ දිනයකි.",
-                            "අද පවුල් සාමජිකයින් සමඟ සම්බන්ධතා ශක්තිමත් කර ගන්න."
-                        ],
-                        weekly: [
-                            "මෙම සතිය තුළ ව්‍යාපාරික ගිවිසුම් වලට හොඳය.",
-                            "මෙම සතියේ අලුත් මිතුරන් සමඟ හමුවීම් වාසනාවන්ත වේ.",
-                            "මෙම සතියේ සෞඛ්‍ය සම්බන්ධ ගැටළු විසඳීමට හැකියාව ඇත."
-                        ],
-                        monthly: [
-                            "මෙම මාසය තුළ සෞඛ්‍යමය ගැටළු සඳහා ප්‍රවේශම් වන්න.",
-                            "මෙම මාසය තුළ මූල්‍යමය වශයෙන් පහසුවක් ඇති වේ.",
-                            "මෙම මාසය තුළ පවුලේ සාමජිකයෙකුගෙන් යෝජනාවක් ලැබිය හැක."
-                        ],
-                        yearly: [
-                            "මෙම වසර තුළ වෘත්තීයමය අභියෝග ජය ගැනීමට හොඳ වසරකි.",
-                            "මෙම වසර තුළ දිගුකාලීන සැලසුම් සකස් කිරීමට හොඳ වසරකි.",
-                            "මෙම වසර තුළ සමාජීය සම්බන්ධතා ශක්තිමත් වේ."
-                        ]
-                    };
-                    
-                    return {
-                        daily: palapalaOptions.daily[day % palapalaOptions.daily.length],
-                        weekly: palapalaOptions.weekly[Math.floor(day/7) % palapalaOptions.weekly.length],
-                        monthly: palapalaOptions.monthly[month % palapalaOptions.monthly.length],
-                        yearly: palapalaOptions.yearly[year % palapalaOptions.yearly.length]
-                    };
                 }
             },
             {
                 name: "වෘෂභ",
                 image: "lagna_vrishaba.jpg",
-                palapala: {
-                    daily: "",
-                    weekly: "",
-                    monthly: "",
-                    yearly: ""
-                },
                 getPrediction: function() {
                     const today = new Date();
                     const day = today.getDate();
@@ -2172,53 +1548,11 @@
                         "සමාජීය කටයුතු සඳහා හොඳ දිනයකි. සමූහ ව්‍යාපෘතියක දී වැදගත් කාර්යභාරයක් ලැබිය හැක."
                     ];
                     return predictions[day % predictions.length];
-                },
-                getPalapala: function() {
-                    const today = new Date();
-                    const day = today.getDate();
-                    const month = today.getMonth();
-                    const year = today.getFullYear();
-                    
-                    const palapalaOptions = {
-                        daily: [
-                            "අද ඔබේ කැපවීම වැඩි වේ. වැඩි කාලයක් සේවා කරන ස්ථානයකින් යම් විශේෂ පිළිගැනීමක් ලැබිය හැක.",
-                            "අද සෞඛ්‍ය සම්බන්ධයෙන් ප්‍රවේශම් වන්න.",
-                            "අද සමාජීය කටයුතු සඳහා හොඳ දිනයකි."
-                        ],
-                        weekly: [
-                            "මෙම සතිය තුළ වැඩ කටයුතුවල දීර්ඝකාලීන සැලසුම් සකස් කර ගැනීම හොඳය.",
-                            "මෙම සතියේ පවුලේ සාමජිකයින් සමඟ විශේෂ සම්බන්ධතාවක් ඇති වේ.",
-                            "මෙම සතියේ සමූහ ව්‍යාපෘතියක දී වැදගත් කාර්යභාරයක් ලැබිය හැක."
-                        ],
-                        monthly: [
-                            "මෙම මාසය තුළ මූල්‍යමය වශයෙන් පහසුවක් ඇති වේ.",
-                            "මෙම මාසය තුළ පවුලේ සාමජිකයෙකුගෙන් යෝජනාවක් ලැබිය හැක.",
-                            "මෙම මාසය තුළ වෘත්තීයමය ප්‍රගතියක් ඇති වේ."
-                        ],
-                        yearly: [
-                            "මෙම වසර තුළ වෘත්තීයමය ජයග්‍රහණ සඳහා හොඳ වසරකි.",
-                            "මෙම වසර තුළ පවුලේ සාමජිකයින් සමඟ සම්බන්ධතා ශක්තිමත් වේ.",
-                            "මෙම වසර තුළ මූල්‍යමය ස්ථාවරත්වයක් ඇති වේ."
-                        ]
-                    };
-                    
-                    return {
-                        daily: palapalaOptions.daily[day % palapalaOptions.daily.length],
-                        weekly: palapalaOptions.weekly[Math.floor(day/7) % palapalaOptions.weekly.length],
-                        monthly: palapalaOptions.monthly[month % palapalaOptions.monthly.length],
-                        yearly: palapalaOptions.yearly[year % palapalaOptions.yearly.length]
-                    };
                 }
             },
             {
                 name: "මිථුන",
                 image: "lagna_mithuna.jpg",
-                palapala: {
-                    daily: "",
-                    weekly: "",
-                    monthly: "",
-                    yearly: ""
-                },
                 getPrediction: function() {
                     const today = new Date();
                     const day = today.getDate();
@@ -2228,53 +1562,11 @@
                         "අලුත් තාක්ෂණයක් ඉගෙන ගැනීමට හොඳ අවස්ථාවකි. පරණ මිතුරෙකුගෙන් සම්බන්ධතාවක් ඇති විය හැක."
                     ];
                     return predictions[day % predictions.length];
-                },
-                getPalapala: function() {
-                    const today = new Date();
-                    const day = today.getDate();
-                    const month = today.getMonth();
-                    const year = today.getFullYear();
-                    
-                    const palapalaOptions = {
-                        daily: [
-                            "අද සන්නිවේදනය වැඩි කර ගැනීම හොඳය.",
-                            "අද අධ්‍යාපනික වශයෙන් සුදුසු දිනයකි.",
-                            "අද නව මිතුරන් ඇති වේ."
-                        ],
-                        weekly: [
-                            "මෙම සතිය තුළ අධ්‍යාපනික වශයෙන් සුදුසුය.",
-                            "මෙම සතියේ කුඩා ගමනක් වාසනාවන්ත වේ.",
-                            "මෙම සතියේ පරණ මිතුරෙකුගෙන් සම්බන්ධතාවක් ඇති විය හැක."
-                        ],
-                        monthly: [
-                            "මෙම මාසය තුළ කුඩා ගමනක් වාසනාවන්ත වේ.",
-                            "මෙම මාසය තුළ අලුත් තාක්ෂණයක් ඉගෙන ගැනීමට හොඳ අවස්ථාවකි.",
-                            "මෙම මාසය තුළ සන්නිවේදන කුසලතා වර්ධනය වේ."
-                        ],
-                        yearly: [
-                            "මෙම වසර තුළ අලුත් තාක්ෂණයක් ඉගෙන ගැනීමට හොඳ වසරකි.",
-                            "මෙම වසර තුළ අධ්‍යාපනික ජයග්‍රහණ සඳහා හොඳ වසරකි.",
-                            "මෙම වසර තුළ සමාජීය සම්බන්ධතා විශාල වශයෙන් වර්ධනය වේ."
-                        ]
-                    };
-                    
-                    return {
-                        daily: palapalaOptions.daily[day % palapalaOptions.daily.length],
-                        weekly: palapalaOptions.weekly[Math.floor(day/7) % palapalaOptions.weekly.length],
-                        monthly: palapalaOptions.monthly[month % palapalaOptions.monthly.length],
-                        yearly: palapalaOptions.yearly[year % palapalaOptions.yearly.length]
-                    };
                 }
             },
             {
                 name: "කටක",
                 image: "lagna_kataka.jpg",
-                palapala: {
-                    daily: "",
-                    weekly: "",
-                    monthly: "",
-                    yearly: ""
-                },
                 getPrediction: function() {
                     const today = new Date();
                     const day = today.getDate();
@@ -2284,53 +1576,11 @@
                         "අධ්‍යාත්මික කටයුතු සඳහා කාලය වෙන් කරන්න. රහස්‍යතාව රැකගන්න."
                     ];
                     return predictions[day % predictions.length];
-                },
-                getPalapala: function() {
-                    const today = new Date();
-                    const day = today.getDate();
-                    const month = today.getMonth();
-                    const year = today.getFullYear();
-                    
-                    const palapalaOptions = {
-                        daily: [
-                            "අද නිවසේ දී වැඩි අවධානයක් යොමු කරන්න.",
-                            "අද පවුලේ කටයුතු සඳහා වැඩි කාලයක් වෙන් කරන්න.",
-                            "අද අධ්‍යාත්මික කටයුතු සඳහා කාලය වෙන් කරන්න."
-                        ],
-                        weekly: [
-                            "මෙම සතිය තුළ පවුලේ කටයුතු සඳහා වැඩි කාලයක් වෙන් කරන්න.",
-                            "මෙම සතියේ රාත්‍රියේ පැවැත්වෙන උත්සවයක් සතුටුදායක වේ.",
-                            "මෙම සතියේ පරණ මිතුරෙකුගෙන් සම්බන්ධතාවක් ඇති විය හැක."
-                        ],
-                        monthly: [
-                            "මෙම මාසය තුළ රාත්‍රියේ පැවැත්වෙන උත්සවයක් සතුටුදායක වේ.",
-                            "මෙම මාසය තුළ පවුලේ සම්බන්ධතා ශක්තිමත් වේ.",
-                            "මෙම මාසය තුළ රහස්‍යතාව රැකගැනීම වැදගත් වේ."
-                        ],
-                        yearly: [
-                            "මෙම වසර තුළ අධ්‍යාත්මික කටයුතු සඳහා හොඳ වසරකි.",
-                            "මෙම වසර තුළ පවුලේ සම්බන්ධතා ශක්තිමත් වේ.",
-                            "මෙම වසර තුළ නිවාස සම්බන්ධ කටයුතු වාසනාවන්ත වේ."
-                        ]
-                    };
-                    
-                    return {
-                        daily: palapalaOptions.daily[day % palapalaOptions.daily.length],
-                        weekly: palapalaOptions.weekly[Math.floor(day/7) % palapalaOptions.weekly.length],
-                        monthly: palapalaOptions.monthly[month % palapalaOptions.monthly.length],
-                        yearly: palapalaOptions.yearly[year % palapalaOptions.yearly.length]
-                    };
                 }
             },
             {
                 name: "සිංහ",
                 image: "lagna_sinha.jpg",
-                palapala: {
-                    daily: "",
-                    weekly: "",
-                    monthly: "",
-                    yearly: ""
-                },
                 getPrediction: function() {
                     const today = new Date();
                     const day = today.getDate();
@@ -2340,53 +1590,11 @@
                         "ආයෝජනයක් කිරීමට හොඳ දිනයකි. දිගුකාලීන සැලසුම් සකස් කිරීමට හොඳය."
                     ];
                     return predictions[day % predictions.length];
-                },
-                getPalapala: function() {
-                    const today = new Date();
-                    const day = today.getDate();
-                    const month = today.getMonth();
-                    const year = today.getFullYear();
-                    
-                    const palapalaOptions = {
-                        daily: [
-                            "අද ඔබේ නායකත්ව ගුණාංග පෙන්වීමට හොඳ අවස්ථාවකි.",
-                            "අද වැඩි වැඩි කටයුතු භාර ගැනීමට හැකියාව ඇත.",
-                            "අද ආයෝජනයක් කිරීමට හොඳ දිනයකි."
-                        ],
-                        weekly: [
-                            "මෙම සතිය තුළ වැඩි වැඩි කටයුතු භාර ගැනීමට හැකියාව ඇත.",
-                            "මෙම සතියේ යම් ප්‍රසිද්ධියක් ලැබිය හැක.",
-                            "මෙම සතියේ දිගුකාලීන සැලසුම් සකස් කිරීමට හොඳය."
-                        ],
-                        monthly: [
-                            "මෙම මාසය තුළ යම් ප්‍රසිද්ධියක් ලැබිය හැක.",
-                            "මෙම මාසය තුළ වෘත්තීයමය වශයෙන් ඉහළ යාමේ අවස්ථාවකි.",
-                            "මෙම මාසය තුළ ආයෝජන කටයුතු වාසනාවන්ත වේ."
-                        ],
-                        yearly: [
-                            "මෙම වසර තුළ ආයෝජනයක් කිරීමට හොඳ වසරකි.",
-                            "මෙම වසර තුළ දිගුකාලීන සැලසුම් සකස් කිරීමට හොඳ වසරකි.",
-                            "මෙම වසර තුළ නායකත්ව පදවි සඳහා හොඳ වසරකි."
-                        ]
-                    };
-                    
-                    return {
-                        daily: palapalaOptions.daily[day % palapalaOptions.daily.length],
-                        weekly: palapalaOptions.weekly[Math.floor(day/7) % palapalaOptions.weekly.length],
-                        monthly: palapalaOptions.monthly[month % palapalaOptions.monthly.length],
-                        yearly: palapalaOptions.yearly[year % palapalaOptions.yearly.length]
-                    };
                 }
             },
             {
                 name: "කන්‍යා",
                 image: "lagna_kanya.jpg",
-                palapala: {
-                    daily: "",
-                    weekly: "",
-                    monthly: "",
-                    yearly: ""
-                },
                 getPrediction: function() {
                     const today = new Date();
                     const day = today.getDate();
@@ -2396,53 +1604,11 @@
                         "විද්‍යාත්මක කටයුතු සඳහා හොඳ දිනයකි. පර්යේෂණ කටයුතු සඳහා හොඳ දිනයකි."
                     ];
                     return predictions[day % predictions.length];
-                },
-                getPalapala: function() {
-                    const today = new Date();
-                    const day = today.getDate();
-                    const month = today.getMonth();
-                    const year = today.getFullYear();
-                    
-                    const palapalaOptions = {
-                        daily: [
-                            "අද සුපිරිසිඳු දිනයකි.",
-                            "අද වැඩ කටයුතු සංවිධානය කර ගැනීම හොඳය.",
-                            "අද විද්‍යාත්මක කටයුතු සඳහා හොඳ දිනයකි."
-                        ],
-                        weekly: [
-                            "මෙම සතිය තුළ වැඩ කටයුතු සංවිධානය කර ගැනීම හොඳය.",
-                            "මෙම සතියේ සෞඛ්‍ය සම්බන්ධ ගැටළු විසඳීමට හැකියාව ඇත.",
-                            "මෙම සතියේ පර්යේෂණ කටයුතු සඳහා හොඳය."
-                        ],
-                        monthly: [
-                            "මෙම මාසය තුළ සෞඛ්‍ය සම්බන්ධ ගැටළු විසඳීමට හැකියාව ඇත.",
-                            "මෙම මාසය තුළ විද්‍යාත්මක කටයුතු සඳහා හොඳය.",
-                            "මෙම මාසය තුළ අලුත් අත්දැකීමක් ලැබේ."
-                        ],
-                        yearly: [
-                            "මෙම වසර තුළ විද්‍යාත්මක කටයුතු සඳහා හොඳ වසරකි.",
-                            "මෙම වසර තුළ පර්යේෂණ කටයුතු සඳහා හොඳ වසරකි.",
-                            "මෙම වසර තුළ සෞඛ්‍යමය වශයෙන් ස්ථාවර වසරකි."
-                        ]
-                    };
-                    
-                    return {
-                        daily: palapalaOptions.daily[day % palapalaOptions.daily.length],
-                        weekly: palapalaOptions.weekly[Math.floor(day/7) % palapalaOptions.weekly.length],
-                        monthly: palapalaOptions.monthly[month % palapalaOptions.monthly.length],
-                        yearly: palapalaOptions.yearly[year % palapalaOptions.yearly.length]
-                    };
                 }
             },
             {
                 name: "තුලා",
                 image: "lagna_tula.jpg",
-                palapala: {
-                    daily: "",
-                    weekly: "",
-                    monthly: "",
-                    yearly: ""
-                },
                 getPrediction: function() {
                     const today = new Date();
                     const day = today.getDate();
@@ -2452,53 +1618,11 @@
                         "සාධාරණ තීරණයක් ගැනීමට හැකියාව ඇත. නීති සම්බන්ධ කටයුතු සඳහා හොඳ දිනයකි."
                     ];
                     return predictions[day % predictions.length];
-                },
-                getPalapala: function() {
-                    const today = new Date();
-                    const day = today.getDate();
-                    const month = today.getMonth();
-                    const year = today.getFullYear();
-                    
-                    const palapalaOptions = {
-                        daily: [
-                            "අද සමබරතාවය රැක ගැනීම වැදගත්ය.",
-                            "අද ව්‍යාපාරික කටයුතුවල දී වගකීම් සහිතව ක්‍රියා කරන්න.",
-                            "අද සාධාරණ තීරණයක් ගැනීමට හැකියාව ඇත."
-                        ],
-                        weekly: [
-                            "මෙම සතිය තුළ ව්‍යාපාරික කටයුතුවල දී වගකීම් සහිතව ක්‍රියා කරන්න.",
-                            "මෙම සතියේ නීති සම්බන්ධ කටයුතු සඳහා හොඳය.",
-                            "මෙම සතියේ සමබරතාවය රැක ගැනීම වැදගත්ය."
-                        ],
-                        monthly: [
-                            "මෙම මාසය තුළ සාධාරණ තීරණයක් ගැනීමට හැකියාව ඇත.",
-                            "මෙම මාසය තුළ නීති සම්බන්ධ කටයුතු සඳහා හොඳය.",
-                            "මෙම මාසය තුළ ව්‍යාපාරික සම්බන්ධතා ශක්තිමත් වේ."
-                        ],
-                        yearly: [
-                            "මෙම වසර තුළ නීති සම්බන්ධ කටයුතු සඳහා හොඳ වසරකි.",
-                            "මෙම වසර තුළ ව්‍යාපාරික සම්බන්ධතා ශක්තිමත් වේ.",
-                            "මෙම වසර තුළ සාධාරණතාවය පිළිබඳ තීරණ සඳහා හොඳ වසරකි."
-                        ]
-                    };
-                    
-                    return {
-                        daily: palapalaOptions.daily[day % palapalaOptions.daily.length],
-                        weekly: palapalaOptions.weekly[Math.floor(day/7) % palapalaOptions.weekly.length],
-                        monthly: palapalaOptions.monthly[month % palapalaOptions.monthly.length],
-                        yearly: palapalaOptions.yearly[year % palapalaOptions.yearly.length]
-                    };
                 }
             },
             {
                 name: "වෘශ්චික",
                 image: "lagna_vrischika.jpg",
-                palapala: {
-                    daily: "",
-                    weekly: "",
-                    monthly: "",
-                    yearly: ""
-                },
                 getPrediction: function() {
                     const today = new Date();
                     const day = today.getDate();
@@ -2508,53 +1632,11 @@
                         "රහස්‍යතාව රැකගන්න. පර්යේෂණ කටයුතු සඳහා හොඳ දිනයකි."
                     ];
                     return predictions[day % predictions.length];
-                },
-                getPalapala: function() {
-                    const today = new Date();
-                    const day = today.getDate();
-                    const month = today.getMonth();
-                    const year = today.getFullYear();
-                    
-                    const palapalaOptions = {
-                        daily: [
-                            "අද ගැඹුරු අදහස් සහතික කර ගැනීමට හොඳ දිනයකි.",
-                            "අද අධ්‍යාත්මික කටයුතු සඳහා කාලය වෙන් කරන්න.",
-                            "අද රහස්‍යතාව රැකගන්න."
-                        ],
-                        weekly: [
-                            "මෙම සතිය තුළ අධ්‍යාත්මික කටයුතු සඳහා කාලය වෙන් කරන්න.",
-                            "මෙම සතියේ ගැඹුරු අදහස් සහතික කර ගැනීමට හොඳය.",
-                            "මෙම සතියේ පර්යේෂණ කටයුතු සඳහා හොඳය."
-                        ],
-                        monthly: [
-                            "මෙම මාසය තුළ රහස්‍යතාව රැකගන්න.",
-                            "මෙම මාසය තුළ ගැඹුරු අදහස් සහතික කර ගැනීමට හොඳය.",
-                            "මෙම මාසය තුළ පර්යේෂණ කටයුතු සඳහා හොඳය."
-                        ],
-                        yearly: [
-                            "මෙම වසර තුළ පර්යේෂණ කටයුතු සඳහා හොඳ වසරකි.",
-                            "මෙම වසර තුළ අධ්‍යාත්මික වර්ධනය සඳහා හොඳ වසරකි.",
-                            "මෙම වසර තුළ ගැඹුරු අදහස් සහතික කර ගැනීමට හොඳ වසරකි."
-                        ]
-                    };
-                    
-                    return {
-                        daily: palapalaOptions.daily[day % palapalaOptions.daily.length],
-                        weekly: palapalaOptions.weekly[Math.floor(day/7) % palapalaOptions.weekly.length],
-                        monthly: palapalaOptions.monthly[month % palapalaOptions.monthly.length],
-                        yearly: palapalaOptions.yearly[year % palapalaOptions.yearly.length]
-                    };
                 }
             },
             {
                 name: "ධනු",
                 image: "lagna_dhanu.jpg",
-                palapala: {
-                    daily: "",
-                    weekly: "",
-                    monthly: "",
-                    yearly: ""
-                },
                 getPrediction: function() {
                     const today = new Date();
                     const day = today.getDate();
@@ -2564,53 +1646,11 @@
                         "සංස්කෘතිමය කටයුතු සඳහා හොඳ දිනය. උසස් අධ්‍යාපනය සඳහා හොඳ අවස්ථාවක්."
                     ];
                     return predictions[day % predictions.length];
-                },
-                getPalapala: function() {
-                    const today = new Date();
-                    const day = today.getDate();
-                    const month = today.getMonth();
-                    const year = today.getFullYear();
-                    
-                    const palapalaOptions = {
-                        daily: [
-                            "අද දුර දෙසට බලන විට හොඳ දිනයකි.",
-                            "අද ඉගෙනීමේ අවස්ථා ලැබිය හැක.",
-                            "අද ගමන් බැදීම ගැන සූදානම් වන්න."
-                        ],
-                        weekly: [
-                            "මෙම සතිය තුළ ඉගෙනීමේ අවස්ථා ලැබිය හැක.",
-                            "මෙම සතියේ සංස්කෘතිමය කටයුතු සඳහා හොඳය.",
-                            "මෙම සතියේ ගමන් බැදීම වාසනාවන්ත වේ."
-                        ],
-                        monthly: [
-                            "මෙම මාසය තුළ ගමන් බැදීම ගැන සූදානම් වන්න.",
-                            "මෙම මාසය තුළ සංස්කෘතිමය කටයුතු සඳහා හොඳය.",
-                            "මෙම මාසය තුළ උසස් අධ්‍යාපනය සඳහා හොඳ අවස්ථාවක්."
-                        ],
-                        yearly: [
-                            "මෙම වසර තුළ උසස් අධ්‍යාපනය සඳහා හොඳ අවස්ථාවක්.",
-                            "මෙම වසර තුළ ගමන් බැදීම සඳහා හොඳ වසරකි.",
-                            "මෙම වසර තුළ සංස්කෘතිමය කටයුතු සඳහා හොඳ වසරකි."
-                        ]
-                    };
-                    
-                    return {
-                        daily: palapalaOptions.daily[day % palapalaOptions.daily.length],
-                        weekly: palapalaOptions.weekly[Math.floor(day/7) % palapalaOptions.weekly.length],
-                        monthly: palapalaOptions.monthly[month % palapalaOptions.monthly.length],
-                        yearly: palapalaOptions.yearly[year % palapalaOptions.yearly.length]
-                    };
                 }
             },
             {
                 name: "මකර",
                 image: "lagna_makara.jpg",
-                palapala: {
-                    daily: "",
-                    weekly: "",
-                    monthly: "",
-                    yearly: ""
-                },
                 getPrediction: function() {
                     const today = new Date();
                     const day = today.getDate();
@@ -2620,53 +1660,11 @@
                         "වෘත්තීයමය වශයෙන් ඉහළ යාමේ අවස්ථාවකි. දිගුකාලීන සැලසුම් සකස් කිරීමට හොඳය."
                     ];
                     return predictions[day % predictions.length];
-                },
-                getPalapala: function() {
-                    const today = new Date();
-                    const day = today.getDate();
-                    const month = today.getMonth();
-                    const year = today.getFullYear();
-                    
-                    const palapalaOptions = {
-                        daily: [
-                            "අද අභියෝග ජය ගැනීමට හොඳ දිනයකි.",
-                            "අද ඉහළ පදවිවල සිටින අයගේ සහයෝගය ලැබිය හැක.",
-                            "අද වෘත්තීයමය වශයෙන් ඉහළ යාමේ අවස්ථාවකි."
-                        ],
-                        weekly: [
-                            "මෙම සතිය තුළ ඉහළ පදවිවල සිටින අයගේ සහයෝගය ලැබිය හැක.",
-                            "මෙම සතියේ වෘත්තීයමය වශයෙන් ඉහළ යාමේ අවස්ථාවකි.",
-                            "මෙම සතියේ දිගුකාලීන සැලසුම් සකස් කිරීමට හොඳය."
-                        ],
-                        monthly: [
-                            "මෙම මාසය තුළ වෘත්තීයමය වශයෙන් ඉහළ යාමේ අවස්ථාවකි.",
-                            "මෙම මාසය තුළ අභියෝග ජය ගැනීමට හොඳය.",
-                            "මෙම මාසය තුළ ඉහළ පදවිවල සිටින අයගේ සහයෝගය ලැබිය හැක."
-                        ],
-                        yearly: [
-                            "මෙම වසර තුළ දිගුකාලීන සැලසුම් සකස් කිරීමට හොඳ වසරකි.",
-                            "මෙම වසර තුළ වෘත්තීයමය වශයෙන් ඉහළ යාමේ වසරකි.",
-                            "මෙම වසර තුළ අභියෝග ජය ගැනීමට හොඳ වසරකි."
-                        ]
-                    };
-                    
-                    return {
-                        daily: palapalaOptions.daily[day % palapalaOptions.daily.length],
-                        weekly: palapalaOptions.weekly[Math.floor(day/7) % palapalaOptions.weekly.length],
-                        monthly: palapalaOptions.monthly[month % palapalaOptions.monthly.length],
-                        yearly: palapalaOptions.yearly[year % palapalaOptions.yearly.length]
-                    };
                 }
             },
             {
                 name: "කුම්භ",
                 image: "lagna_kumbha.jpg",
-                palapala: {
-                    daily: "",
-                    weekly: "",
-                    monthly: "",
-                    yearly: ""
-                },
                 getPrediction: function() {
                     const today = new Date();
                     const day = today.getDate();
@@ -2676,53 +1674,11 @@
                         "අලුත් මිතුරන් සමඟ හමුවීම් වාසනාවන්ත වේ. සමාජ සේවා කටයුතු සඳහා හොඳ දිනයකි."
                     ];
                     return predictions[day % predictions.length];
-                },
-                getPalapala: function() {
-                    const today = new Date();
-                    const day = today.getDate();
-                    const month = today.getMonth();
-                    const year = today.getFullYear();
-                    
-                    const palapalaOptions = {
-                        daily: [
-                            "අද සමාජීය කටයුතු සඳහා හොඳ දිනයකි.",
-                            "අද සමූහ ව්‍යාපෘතියක දී වැදගත් කාර්යභාරයක් ලැබිය හැක.",
-                            "අද අලුත් මිතුරන් සමඟ හමුවීම් වාසනාවන්ත වේ."
-                        ],
-                        weekly: [
-                            "මෙම සතිය තුළ සමූහ ව්‍යාපෘතියක දී වැදගත් කාර්යභාරයක් ලැබිය හැක.",
-                            "මෙම සතියේ අලුත් මිතුරන් සමඟ හමුවීම් වාසනාවන්ත වේ.",
-                            "මෙම සතියේ සමාජ සේවා කටයුතු සඳහා හොඳය."
-                        ],
-                        monthly: [
-                            "මෙම මාසය තුළ අලුත් මිතුරන් සමඟ හමුවීම් වාසනාවන්ත වේ.",
-                            "මෙම මාසය තුළ සමාජ සේවා කටයුතු සඳහා හොඳය.",
-                            "මෙම මාසය තුළ සමූහ ව්‍යාපෘති සඳහා හොඳය."
-                        ],
-                        yearly: [
-                            "මෙම වසර තුළ සමාජ සේවා කටයුතු සඳහා හොඳ වසරකි.",
-                            "මෙම වසර තුළ සමාජීය සම්බන්ධතා වර්ධනය සඳහා හොඳ වසරකි.",
-                            "මෙම වසර තුළ සමූහ ව්‍යාපෘති සඳහා හොඳ වසරකි."
-                        ]
-                    };
-                    
-                    return {
-                        daily: palapalaOptions.daily[day % palapalaOptions.daily.length],
-                        weekly: palapalaOptions.weekly[Math.floor(day/7) % palapalaOptions.weekly.length],
-                        monthly: palapalaOptions.monthly[month % palapalaOptions.monthly.length],
-                        yearly: palapalaOptions.yearly[year % palapalaOptions.yearly.length]
-                    };
                 }
             },
             {
                 name: "මීන",
                 image: "lagna_meena.jpg",
-                palapala: {
-                    daily: "",
-                    weekly: "",
-                    monthly: "",
-                    yearly: ""
-                },
                 getPrediction: function() {
                     const today = new Date();
                     const day = today.getDate();
@@ -2732,42 +1688,6 @@
                         "රහස්‍යතාව රැකගැනීම වැදගත් වේ. අධ්‍යාත්මික ඉගෙනීම් සඳහා හොඳ අවස්ථාවකි."
                     ];
                     return predictions[day % predictions.length];
-                },
-                getPalapala: function() {
-                    const today = new Date();
-                    const day = today.getDate();
-                    const month = today.getMonth();
-                    const year = today.getFullYear();
-                    
-                    const palapalaOptions = {
-                        daily: [
-                            "අද අධ්‍යාත්මිකව සන්සුන් වන දිනයකි.",
-                            "අද සාමකාමී මනසක් ඇති කර ගැනීමට හොඳය.",
-                            "අද රහස්‍යතාව රැකගැනීම වැදගත් වේ."
-                        ],
-                        weekly: [
-                            "මෙම සතිය තුළ සාමකාමී මනසක් ඇති කර ගැනීමට හොඳය.",
-                            "මෙම සතියේ අධ්‍යාත්මිකව සන්සුන් වීමට හොඳය.",
-                            "මෙම සතියේ රහස්‍යතාව රැකගැනීම වැදගත් වේ."
-                        ],
-                        monthly: [
-                            "මෙම මාසය තුළ රහස්‍යතාව රැකගැනීම වැදගත් වේ.",
-                            "මෙම මාසය තුළ අධ්‍යාත්මිකව සන්සුන් වීමට හොඳය.",
-                            "මෙම මාසය තුළ අධ්‍යාත්මික ඉගෙනීම් සඳහා හොඳ අවස්ථාවක්."
-                        ],
-                        yearly: [
-                            "මෙම වසර තුළ අධ්‍යාත්මික ඉගෙනීම් සඳහා හොඳ වසරකි.",
-                            "මෙම වසර තුළ අධ්‍යාත්මික වර්ධනය සඳහා හොඳ වසරකි.",
-                            "මෙම වසර තුළ සාමකාමී ජීවිතයක් සඳහා හොඳ වසරකි."
-                        ]
-                    };
-                    
-                    return {
-                        daily: palapalaOptions.daily[day % palapalaOptions.daily.length],
-                        weekly: palapalaOptions.weekly[Math.floor(day/7) % palapalaOptions.weekly.length],
-                        monthly: palapalaOptions.monthly[month % palapalaOptions.monthly.length],
-                        yearly: palapalaOptions.yearly[year % palapalaOptions.yearly.length]
-                    };
                 }
             }
         ];
@@ -2779,9 +1699,6 @@
         // Initialize Lagna Slider
         function initLagnaSlider() {
             const sliderTrack = document.getElementById('slider-track');
-            
-            // Update all predictions first
-            updateAllPredictions();
             
             // Create slides
             lagnaData.forEach((lagna, index) => {
@@ -2797,7 +1714,7 @@
                         <h3 class="slide-title">
                             <i class="fas fa-star"></i> ${lagna.name} ලග්නය
                         </h3>
-                        <p class="slide-text">${lagna.prediction}</p>
+                        <p class="slide-text">${lagna.getPrediction()}</p>
                     </div>
                 `;
                 sliderTrack.appendChild(slide);
@@ -2805,46 +1722,6 @@
             
             updateSlider();
             startAutoSlide();
-        }
-        
-        // Update all predictions with correct date comparison
-        function updateAllPredictions() {
-            const today = new Date();
-            // Create a unique key for today's date (YYYY-MM-DD format)
-            const dayKey = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
-            
-            // Check if we need to update (new day)
-            const lastUpdate = localStorage.getItem('lastPalapalaUpdate');
-            const needsUpdate = !lastUpdate || lastUpdate !== dayKey;
-            
-            lagnaData.forEach(lagna => {
-                // Update daily prediction
-                lagna.prediction = lagna.getPrediction();
-                
-                // Update palapala if needed
-                if (needsUpdate) {
-                    const newPalapala = lagna.getPalapala();
-                    lagna.palapala = newPalapala;
-                    
-                    // Save to localStorage
-                    localStorage.setItem(`palapala_${lagna.name}`, JSON.stringify(newPalapala));
-                } else {
-                    // Load from localStorage
-                    const savedPalapala = localStorage.getItem(`palapala_${lagna.name}`);
-                    if (savedPalapala) {
-                        lagna.palapala = JSON.parse(savedPalapala);
-                    } else {
-                        lagna.palapala = lagna.getPalapala();
-                    }
-                }
-            });
-            
-            // Update last update timestamp
-            if (needsUpdate) {
-                localStorage.setItem('lastPalapalaUpdate', dayKey);
-            }
-            
-            console.log('Predictions updated for:', dayKey);
         }
         
         // Update Slider Display
@@ -2882,10 +1759,9 @@
             resetAutoSlide();
         }
         
-        // Start Auto Slide - වේගවත් කළා
+        // Start Auto Slide
         function startAutoSlide() {
-            const slideSpeed = isMobile ? 3500 : 4500; // Slightly faster for better UX
-            autoSlideInterval = setInterval(nextSlide, slideSpeed);
+            autoSlideInterval = setInterval(nextSlide, 4500);
         }
         
         // Reset Auto Slide
@@ -2894,79 +1770,38 @@
             startAutoSlide();
         }
         
-        // Start Auto Updates
-        function startAutoUpdates() {
-            // Check for updates every hour
-            setInterval(() => {
-                updateAllPredictions();
-                updateSliderDisplay();
-            }, 60 * 60 * 1000);
-            
-            // Check for daily updates at midnight
-            const now = new Date();
-            const timeUntilMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0) - now;
-            
-            setTimeout(function() {
-                updateAllPredictions();
-                updateSliderDisplay();
-                // Set to run daily at midnight
-                setInterval(() => {
-                    updateAllPredictions();
-                    updateSliderDisplay();
-                }, 24 * 60 * 60 * 1000);
-            }, timeUntilMidnight);
-        }
-        
-        // Update slider display with new predictions
-        function updateSliderDisplay() {
-            const slides = document.querySelectorAll('.slide');
-            slides.forEach((slide, index) => {
-                const textElement = slide.querySelector('.slide-text');
-                
-                if (textElement && lagnaData[index]) {
-                    textElement.textContent = lagnaData[index].prediction;
-                }
-            });
-        }
-        
         // Setup Event Listeners
         function setupEventListeners() {
-            // Mobile touch optimizations
-            const menuCards = document.querySelectorAll('.menu-card');
-            menuCards.forEach(card => {
-                card.addEventListener('mouseenter', function() {
-                    if (!isMobile) {
-                        this.style.transform = 'translateY(-20px) scale(1.08)';
-                    }
-                });
+            // Touch events for slider swipe
+            let touchStartX = 0;
+            let touchEndX = 0;
+            
+            const slider = document.querySelector('.slider-wrapper');
+            if (slider) {
+                slider.addEventListener('touchstart', (e) => {
+                    touchStartX = e.changedTouches[0].screenX;
+                }, { passive: true });
                 
-                card.addEventListener('mouseleave', function() {
-                    if (!isMobile) {
-                        this.style.transform = 'translateY(0) scale(1)';
-                    }
-                });
-            });
-        }
-        
-        // Animate Elements on Scroll
-        function animateElements() {
-            const observerOptions = {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
-            };
+                slider.addEventListener('touchend', (e) => {
+                    touchEndX = e.changedTouches[0].screenX;
+                    handleSwipe();
+                }, { passive: true });
+            }
             
-            const observer = new IntersectionObserver(function(entries) {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.animationPlayState = 'running';
-                        observer.unobserve(entry.target);
+            function handleSwipe() {
+                const swipeThreshold = 50;
+                const diff = touchStartX - touchEndX;
+                
+                if (Math.abs(diff) > swipeThreshold) {
+                    if (diff > 0) {
+                        // Swipe left - next slide
+                        nextSlide();
+                    } else {
+                        // Swipe right - previous slide
+                        prevSlide();
                     }
-                });
-            }, observerOptions);
-            
-            document.querySelectorAll('.fade-in, .slide-up').forEach(el => {
-                observer.observe(el);
-            });
+                }
+            }
         }
         
         // Load Palapala Details
@@ -2974,18 +1809,12 @@
             const palapalaContainer = document.getElementById('palapalaDetails');
             if (!palapalaContainer) return;
             
-            // Update predictions first
-            updateAllPredictions();
-            
             let html = '';
             lagnaData.forEach(lagna => {
                 html += `
-                    <div class="palapala-card">
-                        <h4><i class="fas fa-star"></i> ${lagna.name} ලග්නය</h4>
-                        <p><strong><i class="fas fa-sun"></i> දෛනික:</strong> ${lagna.palapala.daily}</p>
-                        <p><strong><i class="fas fa-calendar-week"></i> සතිමය:</strong> ${lagna.palapala.weekly}</p>
-                        <p><strong><i class="fas fa-calendar-alt"></i> මාසික:</strong> ${lagna.palapala.monthly}</p>
-                        <p><strong><i class="fas fa-calendar"></i> වාර්ෂික:</strong> ${lagna.palapala.yearly}</p>
+                    <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; margin: 10px 0;">
+                        <h4 style="color: #ffd700; margin-bottom: 10px;">${lagna.name} ලග්නය</h4>
+                        <p style="color: #b0c4de;">${lagna.getPrediction()}</p>
                     </div>
                 `;
             });
@@ -2993,166 +1822,25 @@
             palapalaContainer.innerHTML = html;
         }
         
-        // Submit Form - Updated WhatsApp message
-        function submitForm(event) {
-            event.preventDefault();
+        // Mobile touch scroll fix
+        document.addEventListener('DOMContentLoaded', function() {
+            // Force touch scrolling
+            document.body.style.overflowY = 'auto';
+            document.body.style.webkitOverflowScrolling = 'touch';
             
-            const formData = {
-                serviceType: document.getElementById('serviceType').value,
-                fullName: document.getElementById('fullName').value,
-                phoneNumber: document.getElementById('phoneNumber').value,
-                birthDetails: document.getElementById('birthDetails').value,
-                additionalInfo: document.getElementById('additionalInfo').value,
-                timestamp: new Date().toLocaleString('si-LK')
-            };
+            // Prevent default touch behaviors that might block scrolling
+            document.addEventListener('touchmove', function(e) {
+                // Allow scrolling
+            }, { passive: true });
             
-            const whatsappMessage = `Sri seta Astrology - සේවා අයදුම්පත
-
--> සේවා වර්ගය: ${getServiceName(formData.serviceType)}
-
--> නම: ${formData.fullName}
--> දුරකථන: ${formData.phoneNumber}
--> උපන් විස්තර: ${formData.birthDetails}
--> අමතර තොරතුරු: ${formData.additionalInfo}
-
--> යොමු කළ දිනය: ${formData.timestamp}
-
--> ඔබගේ අයදුම්පත ලැබී ඇත.
-
--> මේ සමග ඔබේ ජන්මපත්‍රයේ ජායාරූපයක් අපට එවන්න.
-
--> අපගේ ජෝතීර්වේදිනී සමරවීර මහත්මිය ඔබට සම්බන්ධ වනු ඇත.
-
--> ඔබට ගුණාත්මක සේවාවක් ලබාදීමට අපි බලාපොරොත්තු වෙමු.
-
- ස්තුතියි!`;
-
-            const encodedMessage = encodeURIComponent(whatsappMessage);
-            const whatsappUrl = `https://wa.me/94711010484?text=${encodedMessage}`;
-            
-            const modalContent = document.getElementById('modalContent');
-            modalContent.innerHTML = `
-                <div class="form-success">
-                    <div class="success-icon">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <h3>සේවා අයදුම්පත යොමු කරන ලදී! ✅</h3>
-                    <p>ඔබගේ තොරතුරු සාර්ථකව ගබඩා කරන ලදී. අපගේ ජ්‍යොතිෂවේදිනී ශ්‍රියාණි සමරවීර මහත්මිය ඔබට සම්බන්ධ වනු ඇත.</p>
-                    
-                    <div class="whatsapp-instruction">
-                        <h4><i class="fab fa-whatsapp"></i> WhatsApp පණිවිඩය යැවීමට:</h4>
-                        <p>පහත බොත්තම ක්ලික් කර WhatsApp හරහා ස්වයංක්‍රීයව පණිවිඩය යවන්න. පණිවිඩයේ ඔබගේ සියලු තොරතුරු ස්වයංක්‍රීයව ඇතුළත් වනු ඇත.</p>
-                        
-                        <a href="${whatsappUrl}" target="_blank" class="whatsapp-link">
-                            <i class="fab fa-whatsapp"></i> WhatsApp පණිවිඩය යවන්න
-                        </a>
-                        
-                        <p class="small-note" style="margin-top: 15px; color: #a0b0cc;">
-                            <small><i class="fas fa-info-circle"></i> WhatsApp විවෘත කිරීමට බොත්තම ක්ලික් කරන්න</small>
-                        </p>
-                    </div>
-                    
-                    <div class="service-description" style="margin-top: 30px;">
-                        <h4><i class="fas fa-clock"></i> සේවා කාලය:</h4>
-                        <p>සේවා කාලය: උදේ 9.00 - හවස 4.00 (සෑම දිනකම)</p>
-                    </div>
-                </div>
-            `;
-            
-            saveFormData(formData);
-        }
-        
-        // Get service name
-        function getServiceName(serviceType) {
-            const services = {
-                'porondam': 'පොරොන්දම් බැලීම',
-                'handahan': 'හඳහන් සෑදීම',
-                'palapala': 'පලාපල විස්තර',
-                'all': 'සියලුම නැකැත් සෑදීම'
-            };
-            return services[serviceType] || 'තෝරාගත් සේවාව';
-        }
-        
-        // Save form data
-        function saveFormData(formData) {
-            let savedForms = localStorage.getItem('serviceRequests');
-            savedForms = savedForms ? JSON.parse(savedForms) : [];
-            savedForms.push(formData);
-            localStorage.setItem('serviceRequests', JSON.stringify(savedForms));
-        }
-        
-        // Mobile touch event optimizations for faster scrolling
-        let touchStartX = 0;
-        let touchStartY = 0;
-        
-        // Improved touch handling for fast scrolling
-        document.addEventListener('touchstart', function(e) {
-            touchStartX = e.touches[0].clientX;
-            touchStartY = e.touches[0].clientY;
-            
-            // Allow scrolling in text areas
-            if (e.target.closest('.slide-text') || 
-                e.target.closest('.modal-content') ||
-                e.target.closest('.form-textarea')) {
-                return;
-            }
-        }, { passive: true });
-        
-        document.addEventListener('touchmove', function(e) {
-            // Allow scrolling in specific areas
-            if (e.target.closest('.slide-text') || 
-                e.target.closest('.modal-content') ||
-                e.target.closest('.form-textarea')) {
-                return;
-            }
-            
-            // Prevent horizontal scroll on slider
-            if (e.target.closest('.slider-wrapper')) {
-                e.preventDefault();
-            }
-        }, { passive: false });
-        
-        document.addEventListener('touchend', function(e) {
-            const touchEndX = e.changedTouches[0].clientX;
-            const touchEndY = e.changedTouches[0].clientY;
-            
-            // Handle slider swipe
-            if (Math.abs(touchEndX - touchStartX) > 50) {
-                if (touchEndX < touchStartX) {
-                    // Swipe left - next slide
-                    nextSlide();
-                } else if (touchEndX > touchStartX) {
-                    // Swipe right - previous slide
-                    prevSlide();
-                }
-            }
-        }, { passive: true });
-        
-        // Fast scrolling optimization
-        document.addEventListener('wheel', function(e) {
-            // Increase scroll speed on mobile
-            if (isMobile) {
-                const delta = e.deltaY;
-                const container = document.querySelector('.container');
-                if (container) {
-                    // Smooth scrolling with reduced friction
-                    container.scrollBy({
-                        top: delta * 2.5,
-                        behavior: 'smooth'
-                    });
-                }
-            }
-        }, { passive: true });
-        
-        // Disable smooth scroll on mobile for better performance
-        if (isMobile) {
-            document.documentElement.style.scrollBehavior = 'auto';
-        }
-        
-        // Force update palapala on page load
-        window.addEventListener('load', function() {
-            updateAllPredictions();
+            // Enable scrolling on all elements
+            document.querySelectorAll('*').forEach(el => {
+                el.style.touchAction = 'pan-y';
+            });
         });
+        
+        // Initialize on load
+        window.addEventListener('load', initWebsite);
     </script>
 </body>
 </html>
